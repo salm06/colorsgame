@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ColorsGame</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link href='https://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
+		<meta charset="utf-8">
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+				//General Variables
+				var cols = 3; //Should be odd
+				var rows = Math.floor($(window).height() / 80);
+				var game = $("#gameTable").eq(0);
+				var speed = 7;
+				var lvl = 1;
+				var points = 0;
+				var toSelect = 0;
+				var colorsArrayCenter = ["#DBEBC2","#F7A7A6"]
+				var colorsArraySide = ["#ACDBC9","#F48B94"]
+				var opposite = 0;
+				var rows_count = 0;
+				var inPlay = true;
+				var loopSpeed = 700;
+				var distance = 0;
+				var total = 0;
+
+				function play(){
+					var row = $(document.createElement("div")).addClass("row blur").css({"transition": "transform "+speed+"s linear"}).attr("id",rows_count)
+					rows_count++;
+					$(".totalPoints").html(total)
+					if( $(".active").length ) {
+						distance = Math.round($(".active").eq(0).offset().top - row.offset().top)
+					}
+					if($(".row").length < 1) {
+						row.addClass("active")
+					}
+					for(var c = 0; c < cols; c++) {
+						var random = Math.round(Math.random() * 1) + 0
+
+						if(c == 0 && random == 0) {
+							opposite = 1;
+						} else if(c == 0 && random == 1) {
+							opposite = 0;
+						}
+
+						var curr = $(document.createElement("div")).addClass("circleCont")
+
+						if(c == cols-1) {
+							var currIn = $(document.createElement("div")).addClass("circle").css({"border-color":colorsArraySide[opposite]}).attr("data-target",opposite)
+						} else {
+							var currIn = $(document.createElement("div")).addClass("circle").css({"border-color":colorsArraySide[random]}).attr("data-target",random)
+						}
+						if(c == Math.floor(cols/2)) {
+							curr.addClass("center")
+							currIn.css({"background-color":colorsArrayCenter[random]}).attr("data-target",random)
+						}
+
+						
+
+						curr.append($(currIn))
+						row.append($(curr))
+						
+					}
+					game.append($(row))
+					//Binding gestures
+					
+					setTimeout(function(){
+						row.addClass("falling")
+					},800)
+
+				}
+
+				function lost() {
+					setTimeout(function(){
+						inPlay = false
+
+						$(".row").remove()
+						$(".down").addClass("lost")
+						$(".done").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+						$(".up").addClass("lost")
+						$(".field").html("=(")
+					},800)
+				}
+
+				function win() {
+					setTimeout(function(){
+						//clearInterval(gameLoop)
+						inPlay = false
+						$(".row").remove()
+						$(".field").html("Level UP")
+						points = 0;
+						lvl++
+						loopSpeed = (speed-1) * loopSpeed / speed
+						speed = speed - 1
+						if(loopSpeed < 500) {
+							loopSpeed = 500 - (lvl*25);
+							speed = 5 - (lvl*0.25);
+						}
+						else if(loopSpeed < 250) {
+							loopSpeed = 250;
+							speed = 2.5;
+						}
+						console.log(loopSpeed, speed)
+						restartLoop()
+					},800)
+
+					setTimeout(function(){
+						inPlay = true;
+						$(".done").eq(0).html("20")
+						$(".field").html("")
+					}, 2000)
+				}
+
+				function restartLoop(){
+					clearInterval(gameLoop)
+						gameLoop = setInterval(function(){
+							//Calling play function which build the game
+							if(inPlay) {
+								play()
+							}
+						},loopSpeed)
+				}
+
+				function replay(){
+					inPlay = true;
+					totalPoints = 0;
+					$(".done").eq(0).html("20")
+					$(".field").html("")
+					$(".lost").removeClass("lost")
+					restartLoop()
+				}
+
+				//Set dimensions of game table
+				game.height($(window).height());
+				$(".doArea").eq(0).css({"top":($(window).height()/2)-30})
+				$(".up").eq(0).height(($(window).height()/2)-100).css({"top":"70px"})
+				$(".down").eq(0).height(($(window).height()/2)-65).css({"top":($(window).height()/2)+65})
+
+				//Binding Replay
+				$(document).on("click","#replay",function(){
+					replay();
+				})
+
+				//Populating the table at the start
+				$(document).keydown(function(e){
+					var activeID = $(".active").attr("id")
+					if($("#"+activeID).offset().top >= $(".doArea").offset().top-70) { // Check if in the gray area
+						if (e.keyCode == 37) { 
+							$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
+							$(".active").removeClass("active")
+							$(".row:not(.disabled)").eq(0).addClass("active")
+							if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+								$("#"+activeID).removeClass("active")
+								if(parseInt($(".done").eq(0).html()) > 0){
+									$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+								}
+								if(points >= 20) {
+										win()
+										return false;
+									} else {
+										$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+										points += 1
+										total += 1*lvl
+									}
+							} else {
+								lost()
+							}
+						      return false;
+						}
+
+						if (e.keyCode == 39) { 
+							$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
+							$(".active").removeClass("active")
+							$(".row:not(.disabled)").eq(0).addClass("active")
+							if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+								$("#"+activeID).removeClass("active")
+								if(parseInt($(".done").eq(0).html()) > 0){
+									$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+								}
+								if(points >= 20) {
+										win()
+										return false;
+									} else {
+										$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+										points += 1
+										total += 1*lvl
+									}
+							} else {
+								lost()
+							}
+						      return false;
+						}
+					}
+				})
+
+				$(document).swipe({
+					swipe:function(event, direction, distance, duration, fingerCount) {
+						var activeID = $(".active").attr("id")
+						if($("#"+activeID).offset().top >= $(".doArea").offset().top-70) { // Check if in the gray area
+							if (direction == "left") { 
+								$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
+								$(".active").removeClass("active")
+								$(".row:not(.disabled)").eq(0).addClass("active")
+								if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+									$("#"+activeID).removeClass("active")
+									if(parseInt($(".done").eq(0).html()) > 0){
+										$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+									}
+									if(points >= 20) {
+										win()
+										return false;
+									} else {
+										$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+										points += 1
+										total += 1*lvl
+									}
+								} else {
+									lost()
+								}
+								return false;
+							}
+
+							if (direction == "right") { 
+								$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
+								$(".active").removeClass("active")
+								$(".row:not(.disabled)").eq(0).addClass("active")
+								if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+									$("#"+activeID).removeClass("active")
+									if(parseInt($(".done").eq(0).html()) > 0){
+										$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+									}
+									if(points >= 20) {
+										win()
+										return false;
+									} else {
+										$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+										points += 1
+										total += 1*lvl
+									}
+								} else {
+									lost()
+								}
+								return false;
+							}
+						}
+					}
+				})
+
+
+				var gameLoop = setInterval(function(){
+					//Calling play function which build the game
+					if(inPlay) {
+						play()
+					}
+				},loopSpeed)
+
+				var gameCheck = setInterval(function(){
+					if(inPlay && $(".active").length){
+						//Removing old rows
+						if($(".active").eq(0).offset().top > ($(window).height()/2) + 70) {
+							lost()
+						}
+						if($(".blur").eq(0).offset().top > $(".doArea").offset().top-70) {
+							$(".blur").eq(0).removeClass("blur")
+						}
+					}
+				}, 100)
+				
+
+			})
+		</script>
+	</head>
+	<body>
+		<wrapper>
+			<header>
+			<div class="logo">
+				<span class="color1" >C</span>
+				<span class="color2" >o</span>
+				<span class="color3" >l</span>
+				<span class="color4" >o</span>
+				<span class="color5" >r</span>
+				<span class="color1" >s</span>
+				<span class="color1" >!</span>
+			</div>
+			<div class="totalPoints">0</div>
+			</header>
+			<main id="gameTable">
+				<div class="table up"><div class="field cell"></div></div>
+				<div class="doArea"></div>
+				<div class="down table"><div class="done cell">20</div></div>
+			</main>
+			<footer>
+				
+			</footer>
+		</wrapper>
+	</body>
+</html>
