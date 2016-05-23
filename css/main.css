@@ -79,6 +79,10 @@ html, body
 	Red: #F48B94 
 COLORS PALETTE <<*/
 
+#gameTable {
+	max-width: 480px;
+}
+
 wrapper {
     width: 100%;
     height: 100%;
