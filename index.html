@@ -29,7 +29,7 @@
 				var total = 0;
 
 				function play(){
-					var row = $(document.createElement("div")).addClass("row blur").css({"transition": "transform "+speed+"s linear"}).attr("id",rows_count)
+					var row = $(document.createElement("div")).addClass("row").css({"transition": "transform "+speed+"s linear"}).attr("id",rows_count)
 					rows_count++;
 					$(".totalPoints").html(total)
 					if( $(".active").length ) {
