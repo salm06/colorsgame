@@ -80,8 +80,9 @@
 						var activeID = $(".active").attr("id")
 							if (direction == "left") { 
 								row.addClass("disabled").find(".circleCont.center").addClass("transLeft")
+								row.removeClass("active")
 								if(row.find(".circle").eq(1).attr("data-target") == row.find(".circle").eq(0).attr("data-target")) {
-									row.removeClass("active")
+									row.prev().addClass("active")
 									if(parseInt($(".done").eq(0).html()) > 0){
 										$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 									}
@@ -102,8 +103,9 @@
 
 							if (direction == "right") { 
 								row.addClass("disabled").find(".circleCont.center").addClass("transRight")
+								row.removeClass("active")
 								if(row.find(".circle").eq(1).attr("data-target") == row.find(".circle").eq(2).attr("data-target")) {
-									row.removeClass("active")
+									row.prev().addClass("active")
 									if(parseInt($(".done").eq(0).html()) > 0){
 										$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 									}
@@ -267,7 +269,7 @@
 				var gameCheck = setInterval(function(){
 					if(inPlay && $(".active").length){
 						//Removing old rows
-						if($(".row").eq(0).offset().top > ($(window).height()) + 70) {
+						if($(".active").eq(0).offset().top > ($(window).height()) + 70) {
 							lost()
 						}
 						// if($(".blur").eq(0).offset().top > $(".doArea").offset().top-70) {
