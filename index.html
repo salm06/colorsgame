@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>ColorsGame</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
-		<script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/main.css">
-		<link href='https://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
-		<meta charset="utf-8">
+<head>
+	<title>ColorsGame</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript">
+		$(document).bind('mobileinit',function(){
+			$.mobile.changePage.defaults.changeHash = false;
+			$.mobile.hashListeningEnabled = false;
+			$.mobile.pushStateEnabled = false;
+		});
+	</script>
+	<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+	<!-- <script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>-->
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link href='https://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
+	<meta charset="utf-8">
 
-		<script type="text/javascript">
-			$(document).ready(function(){
+	<script type="text/javascript">
+		$(document).ready(function(){
+
 				//General Variables
 				var cols = 3; //Should be odd
 				var rows = Math.floor($(window).height() / 80);
@@ -75,69 +84,22 @@
 						row.addClass("falling")
 					},800)
 
-					row.swipe({
-					swipe:function(event, direction, distance, duration, fingerCount) {
-						var activeID = $(".active").attr("id")
-							if (direction == "left") { 
-								row.addClass("disabled").find(".circleCont.center").addClass("transLeft")
-								if(row.find(".circle").eq(1).attr("data-target") == row.find(".circle").eq(0).attr("data-target")) {
-									row.removeClass("active")
-									if(parseInt($(".done").eq(0).html()) > 0){
-										$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-									}
-									if(points >= 20) {
-										win()
-										return false;
-									} else {
-										$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-										$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-										points += 1
-										total += 1*lvl
-									}
-								} else {
-									lost()
-								}
-								return false;
-							}
-
-							if (direction == "right") { 
-								row.addClass("disabled").find(".circleCont.center").addClass("transRight")
-								if(row.find(".circle").eq(1).attr("data-target") == row.find(".circle").eq(2).attr("data-target")) {
-									row.removeClass("active")
-									if(parseInt($(".done").eq(0).html()) > 0){
-										$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-									}
-									if(points >= 20) {
-										win()
-										return false;
-									} else {
-										$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-										$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-										points += 1
-										total += 1*lvl
-									}
-								} else {
-									lost()
-								}
-								return false;
-							}
-					}
-				})
-
 				}
 
 				function lost() {
 					setTimeout(function(){
+						clearInterval(gameLoop)
 						inPlay = false
 						points = 0;
 						total = 0;
 						lvl = 1;
 						$(".row").remove()
 						$(".field").html("<div> =( </div>")
-						$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
-						$(".up").addClass("lost")
-						$(".progress").width("0px")
-					},800)
+							$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+							$(".up").addClass("lost")
+							$(".progress").width("0px")
+
+						},800)
 				}
 
 				function win() {
@@ -161,7 +123,7 @@
 						}
 						console.log(loopSpeed, speed)
 						restartLoop()
-					},800)
+					},200)
 
 					setTimeout(function(){
 						inPlay = true;
@@ -172,7 +134,7 @@
 
 				function restartLoop(){
 					clearInterval(gameLoop)
-						gameLoop = setInterval(function(){
+					gameLoop = setInterval(function(){
 							//Calling play function which build the game
 							if(inPlay) {
 								play()
@@ -205,84 +167,132 @@
 				//Populating the table at the start
 				$(document).keydown(function(e){
 					var activeID = $(".active").attr("id")
-						if (e.keyCode == 37) { 
-							$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
-							$(".active").removeClass("active")
-							$(".row:not(.disabled)").eq(0).addClass("active")
-							if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
-								$("#"+activeID).removeClass("active")
-								if(parseInt($(".done").eq(0).html()) > 0){
-									$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-								}
-								if(points >= 20) {
-										win()
-										return false;
-									} else {
-										$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-										$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-										points += 1
-										total += 1*lvl
-									}
-							} else {
-								lost()
+					if (e.keyCode == 37) { 
+						$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
+						$(".active").removeClass("active")
+						$(".row:not(.disabled)").eq(0).addClass("active")
+						if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+							$("#"+activeID).removeClass("active")
+							if(parseInt($(".done").eq(0).html()) > 0){
+								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
-						      return false;
+							if(points >= 20) {
+								win()
+								return false;
+							} else {
+								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+								points += 1
+								total += 1*lvl
+							}
+						} else {
+							lost()
 						}
+						return false;
+					}
 
-						if (e.keyCode == 39) { 
-							$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
-							$(".active").removeClass("active")
-							$(".row:not(.disabled)").eq(0).addClass("active")
-							if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
-								$("#"+activeID).removeClass("active")
-								if(parseInt($(".done").eq(0).html()) > 0){
-									$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-								}
-								if(points >= 20) {
-										win()
-										return false;
-									} else {
-										$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-										$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-										points += 1
-										total += 1*lvl
-									}
-							} else {
-								lost()
+					if (e.keyCode == 39) { 
+						$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
+						$(".active").removeClass("active")
+						$(".row:not(.disabled)").eq(0).addClass("active")
+						if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+							$("#"+activeID).removeClass("active")
+							if(parseInt($(".done").eq(0).html()) > 0){
+								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
-						      return false;
+							if(points >= 20) {
+								win()
+								return false;
+							} else {
+								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+								points += 1
+								total += 1*lvl
+							}
+						} else {
+							lost()
 						}
+						return false;
+					}
 				})
 
-				
+$(document).on("swipeleft",function(){
+	var activeID = $(".active").attr("id")
+	$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
+	$(".active").removeClass("active")
+	$(".row:not(.disabled)").eq(0).addClass("active")
+	if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+		$("#"+activeID).removeClass("active")
+		if(parseInt($(".done").eq(0).html()) > 0){
+			$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+		}
+		if(points >= 20) {
+			win()
+			return false;
+		} else {
+			$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+			$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+			points += 1
+			total += 1*lvl
+		}
+	} else {
+		lost()
+	}
+	return false;
+})
+
+$(document).on("swiperight", function(){
+	var activeID = $(".active").attr("id")
+	$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
+	$(".active").removeClass("active")
+	$(".row:not(.disabled)").eq(0).addClass("active")
+	if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+		$("#"+activeID).removeClass("active")
+		if(parseInt($(".done").eq(0).html()) > 0){
+			$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+		}
+		if(points >= 20) {
+			win()
+			return false;
+		} else {
+			$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+			$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+			points += 1
+			total += 1*lvl
+		}
+	} else {
+		lost()
+	}
+	return false;
+})
 
 
-				var gameLoop = setInterval(function(){
+var gameLoop = setInterval(function(){
 					//Calling play function which build the game
 					if(inPlay) {
 						play()
 					}
 				},loopSpeed)
 
-				var gameCheck = setInterval(function(){
-					if(inPlay && $(".active").length){
+var gameCheck = setInterval(function(){
+	if(inPlay && $(".active").length){
 						//Removing old rows
 						if($(".active").eq(0).offset().top > ($(window).height()) + 70) {
 							lost()
 						}
-						if($(".blur").eq(0).offset().top > $(".doArea").offset().top-70) {
-							$(".blur").eq(0).removeClass("blur")
-						}
+						// if($(".blur").eq(0).offset().top > $(".doArea").offset().top-70) {
+						// 	$(".blur").eq(0).removeClass("blur")
+						// }
 					}
 				}, 100)
-				
 
-			})
-		</script>
-	</head>
-	<body>
-		<wrapper>
-			<header>
+
+})
+</script>
+</head>
+<body>
+	<wrapper>
+		<header>
 			<div class="progress"></div>
 			<div class="logo">
 				<span class="color1" >C</span>
@@ -294,14 +304,14 @@
 				<span class="color1" >!</span>
 			</div>
 			<div class="totalPoints">0</div>
-			</header>
-			<main id="gameTable">
-				<div class="table up"><div class="field cell"></div></div>
-				<!-- <div class="doArea"></div> -->
-			</main>
-			<footer>
-				
-			</footer>
-		</wrapper>
-	</body>
+		</header>
+		<main id="gameTable">
+			<div class="table up"><div class="field cell"></div></div>
+			<!-- <div class="doArea"></div> -->
+		</main>
+		<footer>
+
+		</footer>
+	</wrapper>
+</body>
 </html>
