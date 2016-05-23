@@ -4,6 +4,13 @@
 	<title>ColorsGame</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript">
+			$(document).bind('mobileinit',function(){
+				$.mobile.changePage.defaults.changeHash = false;
+				$.mobile.hashListeningEnabled = false;
+				$.mobile.pushStateEnabled = false;
+			});
+		</script>
 	<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
 	<!-- <script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>-->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
@@ -12,6 +19,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function(){
+
 				//General Variables
 				var cols = 3; //Should be odd
 				var rows = Math.floor($(window).height() / 80);
