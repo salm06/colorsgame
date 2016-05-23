@@ -1,0 +1,39 @@
+{"years":
+  [{"name":"2016",
+      "months":
+          [{
+            "name":"Aprile",
+           "budget_iniziale":"20.00",
+            "bets":
+            [{
+              "day": "26",
+              "index": "0.7",
+              "amount": "8.00",
+              "win": "22.80",
+              "result":1,
+              "events":
+              [{
+                "title":"Manchester City - Real Madrid",
+                "type":"2 + Over 1,5",
+                "quote":"2.85"
+              }],
+              "quote_total":"2.85"
+              
+            },
+            {
+             "day": "15",
+              "index": "0.5",
+              "amount": "2.00",
+              "win": "24.00",
+              "result":0,
+              "events":
+              [{
+                "title":"Juventus - Milan",
+                "type":"0-2",
+                "quote":"12.00"
+              }],
+                "quote_total":"12.00"
+            }]
+          }]
+      }]
+}
