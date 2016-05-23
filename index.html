@@ -3,14 +3,14 @@
 <head>
 	<title>ColorsGame</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
-		<script type="text/javascript">
-			$(document).bind('mobileinit',function(){
-				$.mobile.changePage.defaults.changeHash = false;
-				$.mobile.hashListeningEnabled = false;
-				$.mobile.pushStateEnabled = false;
-			});
-		</script>
+	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript">
+		$(document).bind('mobileinit',function(){
+			$.mobile.changePage.defaults.changeHash = false;
+			$.mobile.hashListeningEnabled = false;
+			$.mobile.pushStateEnabled = false;
+		});
+	</script>
 	<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
 	<!-- <script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>-->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
@@ -216,54 +216,54 @@
 					}
 				})
 
-$(document).on("swipeleft",".row",function(){
+$(document).on("swipeleft",function(){
 	var activeID = $(".active").attr("id")
 	$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
-			$(".active").removeClass("active")
-			$(".row:not(.disabled)").eq(0).addClass("active")
-			if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
-				$("#"+activeID).removeClass("active")
-				if(parseInt($(".done").eq(0).html()) > 0){
-					$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-				}
-				if(points >= 20) {
-					win()
-					return false;
-				} else {
-					$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-					$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-					points += 1
-					total += 1*lvl
-				}
-			} else {
-				lost()
-			}
+	$(".active").removeClass("active")
+	$(".row:not(.disabled)").eq(0).addClass("active")
+	if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+		$("#"+activeID).removeClass("active")
+		if(parseInt($(".done").eq(0).html()) > 0){
+			$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+		}
+		if(points >= 20) {
+			win()
 			return false;
+		} else {
+			$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+			$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+			points += 1
+			total += 1*lvl
+		}
+	} else {
+		lost()
+	}
+	return false;
 })
 
-$(document).on("swiperight",".row", function(){
+$(document).on("swiperight", function(){
 	var activeID = $(".active").attr("id")
 	$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
-			$(".active").removeClass("active")
-			$(".row:not(.disabled)").eq(0).addClass("active")
-			if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
-				$("#"+activeID).removeClass("active")
-				if(parseInt($(".done").eq(0).html()) > 0){
-					$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-				}
-				if(points >= 20) {
-					win()
-					return false;
-				} else {
-					$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-					$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-					points += 1
-					total += 1*lvl
-				}
-			} else {
-				lost()
-			}
+	$(".active").removeClass("active")
+	$(".row:not(.disabled)").eq(0).addClass("active")
+	if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+		$("#"+activeID).removeClass("active")
+		if(parseInt($(".done").eq(0).html()) > 0){
+			$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+		}
+		if(points >= 20) {
+			win()
 			return false;
+		} else {
+			$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+			$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+			points += 1
+			total += 1*lvl
+		}
+	} else {
+		lost()
+	}
+	return false;
 })
 
 
