@@ -77,15 +77,11 @@
 
 					row.swipe({
 					swipe:function(event, direction, distance, duration, fingerCount) {
-						var activeID = $(".active").attr("id")
 							if (direction == "left") { 
-								row.addClass("disabled").find(".circleCont.center").addClass("transLeft")
-								row.removeClass("active")
+								row.find(".circleCont.center").addClass("transLeft")
 								if(row.find(".circle").eq(1).attr("data-target") == row.find(".circle").eq(0).attr("data-target")) {
-									row.prev().addClass("active")
-									if(parseInt($(".done").eq(0).html()) > 0){
-										$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-									}
+									$(".active").removeClass("active")
+									row.prev().eq(0).addClass("active")
 									if(points >= 20) {
 										win()
 										return false;
@@ -102,13 +98,10 @@
 							}
 
 							if (direction == "right") { 
-								row.addClass("disabled").find(".circleCont.center").addClass("transRight")
-								row.removeClass("active")
+								row.find(".circleCont.center").addClass("transRight")
 								if(row.find(".circle").eq(1).attr("data-target") == row.find(".circle").eq(2).attr("data-target")) {
-									row.prev().addClass("active")
-									if(parseInt($(".done").eq(0).html()) > 0){
-										$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-									}
+									$(".active").removeClass("active")
+									row.prev().eq(0).addClass("active")
 									if(points >= 20) {
 										win()
 										return false;
@@ -130,6 +123,7 @@
 
 				function lost() {
 					setTimeout(function(){
+						clearInterval(gameLoop)
 						inPlay = false
 						points = 0;
 						total = 0;
@@ -139,6 +133,7 @@
 						$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
 						$(".up").addClass("lost")
 						$(".progress").width("0px")
+
 					},800)
 				}
 
@@ -163,7 +158,7 @@
 						}
 						console.log(loopSpeed, speed)
 						restartLoop()
-					},800)
+					},200)
 
 					setTimeout(function(){
 						inPlay = true;
