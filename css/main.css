@@ -260,9 +260,9 @@ main {
 }*/
 
 .row.falling{
-	-webkit-transform: translateY(1000px);
+	/*-webkit-transform: translateY(1000px);
   	-moz-transform: translateY(1000px);
-  	transform: translateY(1000px);
+  	transform: translateY(1000px);*/
 }
 
 .row > .circleCont {
