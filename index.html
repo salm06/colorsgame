@@ -24,7 +24,6 @@
 				var cols = 3; //Should be odd
 				var rows = Math.floor($(window).height() / 80);
 				var game = $("#gameTable").eq(0);
-				var speed = 7;
 				var lvl = 1;
 				var points = 0;
 				var toSelect = 0;
@@ -33,12 +32,21 @@
 				var opposite = 0;
 				var rows_count = 0;
 				var inPlay = true;
-				var loopSpeed = 700;
 				var distance = 0;
 				var total = 0;
+				var targetHeight = $(window).height() + 100
+				var loopSpeed = targetHeight;
+				var speed = targetHeight/110;
+				console.log(targetHeight)
 
 				function play(){
-					var row = $(document.createElement("div")).addClass("row").css({"transition": "transform "+speed+"s linear"}).attr("id",rows_count)
+					// if( $(".row").length ) {
+					// 	$(".row").each(function(){
+					// 		$(".row").css({"transition": "transform "+speed+"s linear", "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+					// 	})
+					// }
+
+					var row = $(document.createElement("div")).addClass("row level_"+lvl).attr("id",rows_count)
 					rows_count++;
 					if(rows_count%2 == 0) {
 						row.addClass("grey")
@@ -77,12 +85,15 @@
 						row.append(curr)
 						
 					}
+					//Appending Row
 					game.append($(row))
-					//Binding gestures
-					
-					setTimeout(function(){
-						row.addClass("falling")
-					},800)
+
+					//Set new speed to all
+					$(".row").each(function(){
+						var computedPosition = $(this).offset().top
+						$(this).stop().animate({top: (computedPosition+targetHeight)+"px"}, speed*1000, "linear")
+					})
+					// .css({"-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
 
 				}
 
@@ -93,43 +104,33 @@
 						points = 0;
 						total = 0;
 						lvl = 1;
+						speed = targetHeight/100;
+						loopSpeed = targetHeight;
 						$(".row").remove()
-						$(".field").html("<div> =( </div>")
-							$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
-							$(".up").addClass("lost")
-							$(".progress").width("0px")
+						$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+						$(".up").addClass("lost")
+						$(".progress").width("0px")
 
-						},800)
+						},200)
 				}
 
 				function win() {
-					setTimeout(function(){
-						//clearInterval(gameLoop)
 						$(".progress").width("0px")
-						inPlay = false
-						$(".row").remove()
-						$(".field").html("Level UP")
 						points = 0;
 						lvl++
-						loopSpeed = (speed-1) * loopSpeed / speed
-						speed = speed - 1
-						if(loopSpeed < 500) {
+						if(loopSpeed < 500 && loopSpeed > 250) {
 							loopSpeed = 500 - (lvl*25);
 							speed = 5 - (lvl*0.25);
-						}
-						else if(loopSpeed < 250) {
+						} else if(loopSpeed < 250) {
 							loopSpeed = 250;
 							speed = 2.5;
+						} else {
+							loopSpeed = (speed-1) * loopSpeed / speed
+							speed = speed - 1
 						}
-						console.log(loopSpeed, speed)
-						restartLoop()
-					},200)
 
-					setTimeout(function(){
-						inPlay = true;
-						$(".done").eq(0).html("20")
-						$(".field").html("")
-					}, 2000)
+						console.log(loopSpeed, speed, loopSpeed < 250)
+						restartLoop()
 				}
 
 				function restartLoop(){
@@ -164,7 +165,7 @@
 					replay();
 				})
 
-				//Populating the table at the start
+				//Binding events Keyboard
 				$(document).keydown(function(e){
 					var activeID = $(".active").attr("id")
 					if (e.keyCode == 37) { 
@@ -214,75 +215,84 @@
 						}
 						return false;
 					}
+					if (e.keyCode == 13 && !inPlay) {
+						replay();
+					}
+				})
+				
+				//Binding events Touch
+				$(document).on("swipeleft",function(){
+					var activeID = $(".active").attr("id")
+					$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
+					$(".active").removeClass("active")
+					$(".row:not(.disabled)").eq(0).addClass("active")
+					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+						$("#"+activeID).removeClass("active")
+						if(parseInt($(".done").eq(0).html()) > 0){
+							$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+						}
+						if(points >= 20) {
+							win()
+							return false;
+						} else {
+							$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+							$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+							points += 1
+							total += 1*lvl
+						}
+					} else {
+						lost()
+					}
+					return false;
 				})
 
-$(document).on("swipeleft",function(){
-	var activeID = $(".active").attr("id")
-	$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
-	$(".active").removeClass("active")
-	$(".row:not(.disabled)").eq(0).addClass("active")
-	if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
-		$("#"+activeID).removeClass("active")
-		if(parseInt($(".done").eq(0).html()) > 0){
-			$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-		}
-		if(points >= 20) {
-			win()
-			return false;
-		} else {
-			$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-			$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-			points += 1
-			total += 1*lvl
-		}
-	} else {
-		lost()
-	}
-	return false;
-})
-
-$(document).on("swiperight", function(){
-	var activeID = $(".active").attr("id")
-	$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
-	$(".active").removeClass("active")
-	$(".row:not(.disabled)").eq(0).addClass("active")
-	if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
-		$("#"+activeID).removeClass("active")
-		if(parseInt($(".done").eq(0).html()) > 0){
-			$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-		}
-		if(points >= 20) {
-			win()
-			return false;
-		} else {
-			$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-			$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-			points += 1
-			total += 1*lvl
-		}
-	} else {
-		lost()
-	}
-	return false;
-})
+				$(document).on("swiperight", function(){
+					var activeID = $(".active").attr("id")
+					$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
+					$(".active").removeClass("active")
+					$(".row:not(.disabled)").eq(0).addClass("active")
+					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+						$("#"+activeID).removeClass("active")
+						if(parseInt($(".done").eq(0).html()) > 0){
+							$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+						}
+						if(points >= 20) {
+							win()
+							return false;
+						} else {
+							$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+							$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+							points += 1
+							total += 1*lvl
+						}
+					} else {
+						lost()
+					}
+					return false;
+				})
 
 
-var gameLoop = setInterval(function(){
+				var gameLoop = setInterval(function(){
 					//Calling play function which build the game
 					if(inPlay) {
 						play()
 					}
 				},loopSpeed)
 
-var gameCheck = setInterval(function(){
-	if(inPlay && $(".active").length){
+				var gameCheck = setInterval(function(){
+					if(inPlay){
 						//Removing old rows
-						if($(".active").eq(0).offset().top > ($(window).height()) + 70) {
-							lost()
+						if($(".active").length) {
+							if($(".active").eq(0).offset().top >= targetHeight-100) {
+								lost()
+							}
 						}
-						// if($(".blur").eq(0).offset().top > $(".doArea").offset().top-70) {
-						// 	$(".blur").eq(0).removeClass("blur")
-						// }
+						//Removing from DOM old rows
+						if($(".disabled").length){
+							if($(".disabled").eq(0).offset().top >= targetHeight-100) {
+								$(".disabled").eq(0).remove()
+							}
+						}
 					}
 				}, 100)
 
