@@ -40,13 +40,7 @@
 				console.log(targetHeight)
 
 				function play(){
-					// if( $(".row").length ) {
-					// 	$(".row").each(function(){
-					// 		$(".row").css({"transition": "transform "+speed+"s linear", "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
-					// 	})
-					// }
-
-					var row = $(document.createElement("div")).addClass("row level_"+lvl).attr("id",rows_count)
+					var row = $(document.createElement("div")).addClass("row level_"+lvl).css({"transition": "transform "+speed+"s linear"}).attr("id",rows_count)
 					rows_count++;
 					if(rows_count%2 == 0) {
 						row.addClass("grey")
@@ -85,15 +79,13 @@
 						row.append(curr)
 						
 					}
-					//Appending Row
 					game.append($(row))
+					//Binding gestures
+					
+					setTimeout(function(){
+						row.addClass("falling").css({"-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+					},800)
 
-					//Set new speed to all
-					$(".row").each(function(){
-						var computedPosition = $(this).offset().top
-						$(this).stop().animate({top: (computedPosition+targetHeight)+"px"}, speed*1000, "linear")
-					})
-					// .css({"-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
 
 				}
 
@@ -116,9 +108,10 @@
 
 				function win() {
 						$(".progress").width("0px")
+						inPlay = false
 						points = 0;
 						lvl++
-						if(loopSpeed < 500 && loopSpeed > 250) {
+					if(loopSpeed < 500 && loopSpeed > 250) {
 							loopSpeed = 500 - (lvl*25);
 							speed = 5 - (lvl*0.25);
 						} else if(loopSpeed < 250) {
@@ -128,9 +121,19 @@
 							loopSpeed = (speed-1) * loopSpeed / speed
 							speed = speed - 1
 						}
-
 						console.log(loopSpeed, speed, loopSpeed < 250)
+						inPlay = true
+						$(".falling").each(function(){
+							var computedPosition = $(this).offset().top
+							$(this).css({"transition": "transform "+speed+"s linear", "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+						})
 						restartLoop()
+
+					// setTimeout(function(){
+					// 	inPlay = true;
+					// 	$(".done").eq(0).html("20")
+					// 	$(".field").html("")
+					// }, 2000)
 				}
 
 				function restartLoop(){
@@ -177,7 +180,7 @@
 							if(parseInt($(".done").eq(0).html()) > 0){
 								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
-							if(points >= 20) {
+							if(points >= 2) {
 								win()
 								return false;
 							} else {
@@ -201,7 +204,7 @@
 							if(parseInt($(".done").eq(0).html()) > 0){
 								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
-							if(points >= 20) {
+							if(points >= 2) {
 								win()
 								return false;
 							} else {
