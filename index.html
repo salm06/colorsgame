@@ -37,6 +37,7 @@
 				var targetHeight = $(window).height() + 100
 				var speed = 7;
 				var loopSpeed =speed*100;
+				var winFlag = false
 				console.log(targetHeight)
 
 				function play(){
@@ -110,7 +111,6 @@
 					console.log("WIN")
 					$(".progress").width("0px")
 					lvl++
-					inPlay = false
 					points = 0;
 					if(loopSpeed < 500 && loopSpeed > 260) {
 						loopSpeed = 500 - (lvl*25);
@@ -130,6 +130,13 @@
 				function restartLoop(){
 					clearInterval(gameLoop)
 					inPlay = true
+					$(".level_"+(lvl-1)).each(function(){
+							console.log($(this))
+							console.log($(this).css("transition"))
+							var nowHeight = targetHeight + $(this).offset().top
+							$(this).css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+							console.log($(this).css("transition"))
+						})
 					gameLoop = setInterval(function(){
 						//Calling play function which build the game
 						if(inPlay) {
