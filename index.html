@@ -42,7 +42,6 @@
 				var colorsToUse = 2
 
 				function createRow(row) {
-					console.log(life)
 					var color1 = Math.floor(Math.random() * colorsToUse)
 					var color3 = Math.floor(Math.random() * colorsToUse)
 					if(color3 == color1) {
@@ -123,6 +122,7 @@
 				}
 
 				function win() {
+					inPlay = false;
 					if(lvl%2 == 0) {
 						colorsToUse++	
 					}
@@ -318,7 +318,7 @@
 				<span class="color4" >o</span>
 				<span class="color5" >r</span>
 				<span class="color1" >s</span>
-				<span class="color1" >!</span>
+				<span class="color1" ></span>
 			</div>
 			<div class="totalPoints">0</div>
 		</header>
