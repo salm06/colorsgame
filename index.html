@@ -91,20 +91,20 @@
 				}
 
 				function lost() {
-					// setTimeout(function(){
-					// 	clearInterval(gameLoop)
-					// 	inPlay = false
-					// 	points = 0;
-					// 	total = 0;
-					// 	lvl = 1;
-					// 	speed = targetHeight/100;
-					// 	loopSpeed = targetHeight;
-					// 	$(".row").remove()
-					// 	$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
-					// 	$(".up").addClass("lost")
-					// 	$(".progress").width("0px")
+					 setTimeout(function(){
+					 	clearInterval(gameLoop)
+					 	inPlay = false
+					 	points = 0;
+						total = 0;
+					 	lvl = 1;
+						speed = targetHeight/100;
+					 	loopSpeed = targetHeight;
+					 	$(".row").remove()
+						$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+					 	$(".up").addClass("lost")
+					 	$(".progress").width("0px")
 
-					// 	},200)
+					 	},200)
 				}
 
 				function win() {
