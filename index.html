@@ -35,9 +35,8 @@
 				var total = 0;
 				var targetHeight = $(window).height() + 100
 				var resetSpeed = 7;
-				var speed = targetHeight/110;
 				var loopSpeed = targetHeight;
-					
+				var speed = targetHeight/110;
 				var winFlag = false
 				var life = 0
 				var colorsToUse = 2
@@ -72,9 +71,7 @@
 					curr3.append(currIn3)
 					row.append(curr1, curr2, curr3)
 
-					setTimeout(function(){
-						game.append($(row))
-					},200)
+					game.append($(row))
 				}
 
 				function play(){
@@ -96,7 +93,7 @@
 					//Binding gestures
 					setTimeout(function(){
 						row.addClass("falling").css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
-					},600)
+					},200)
 
 
 				}
