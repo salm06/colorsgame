@@ -122,6 +122,7 @@
 				}
 
 				function win() {
+					clearInterval(gameLoop)
 					inPlay = false;
 					if(lvl%2 == 0) {
 						colorsToUse++	
@@ -150,11 +151,12 @@
 
 				function restartLoop(){
 					clearInterval(gameLoop)
-					inPlay = true
 					$(".level_"+(lvl-1)).each(function(){
 							var nowHeight = targetHeight + $(this).offset().top
 							$(this).css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
 						})
+					
+					inPlay = true
 					gameLoop = setInterval(function(){
 						//Calling play function which build the game
 						if(inPlay) {
