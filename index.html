@@ -34,12 +34,14 @@
 				var distance = 0;
 				var total = 0;
 				var targetHeight = $(window).height() + 100
-				var resetSpeed = 7;
+				var resetSpeed = targetHeight/120;
 				var loopSpeed = targetHeight;
 				var speed = targetHeight/120;
 				var winFlag = false
 				var life = 0
 				var colorsToUse = 2
+
+				console.log(loopSpeed, speed)
 
 				function createRow(row) {
 					var color1 = Math.floor(Math.random() * colorsToUse)
@@ -124,7 +126,7 @@
 				function win() {
 					clearInterval(gameLoop)
 					inPlay = false;
-					if(lvl%2 == 0) {
+					if(lvl%2 == 0 && colorsToUse < colorsList.length) {
 						colorsToUse++	
 					}
 					$(".progress").width("0px")
@@ -135,16 +137,18 @@
 					}
 					points = 0;
 					if(loopSpeed < 500 && loopSpeed > 260) {
-						loopSpeed = 500 - (lvl*25);
-						speed = 5 - (lvl*0.25);
-					} else if(loopSpeed < 260) {
+						loopSpeed = (speed-0.5) * targetHeight / resetSpeed
+						speed = speed - 0.5
+					} else 
+					if(loopSpeed < 260) {
 						loopSpeed = 250;
-						speed = 2.5;
+						speed = (loopSpeed * resetSpeed / targetHeight);
 					} else {
-						loopSpeed = (speed-1) * loopSpeed / speed
+						loopSpeed = (speed-1) * targetHeight / resetSpeed
 						speed = speed - 1
 					}
-						
+					console.log(loopSpeed, speed)
+					
 					restartLoop()
 
 				}
@@ -155,7 +159,7 @@
 							var nowHeight = targetHeight + $(this).offset().top
 							$(this).css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
 						})
-					
+
 					inPlay = true
 					gameLoop = setInterval(function(){
 						//Calling play function which build the game
@@ -204,7 +208,7 @@
 								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
 								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+								$(".progress").width( $(".progress").width() + ($(window).width() / (lvl*5)) )
 								points += 1
 								total += 1
 						} else {
