@@ -1,327 +1,327 @@
-/* RESET ZONE >> */
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ColorsGame</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript">
+		$(document).bind('mobileinit',function(){
+			$.mobile.changePage.defaults.changeHash = false;
+			$.mobile.hashListeningEnabled = false;
+			$.mobile.pushStateEnabled = false;
+		});
+	</script>
+	<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+	<!-- <script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>-->
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link href='https://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
+	<meta charset="utf-8">
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-	box-sizing: border-box;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
+	<script type="text/javascript">
+		$(document).ready(function(){
 
-html, body
-{
-    height: 100%;
-    width: 100%;
-    font-family: 'Lato', sans-serif;
-    font-size: 1em;
-    font-weight: lighter;
-    overflow: hidden;
-    position:fixed;
-    color: #4A4A4A;
-}
+				//General Variables
+				var cols = 3; //Should be odd
+				var rows = Math.floor($(window).height() / 80);
+				var game = $("#gameTable").eq(0);
+				var lvl = 1;
+				var points = 0;
+				var toSelect = 0;
+				var colorsList =  [{"center":"#F7A7A6","side":"#F48B94"},{"center":"#DBEBC2","side":"#ACDBC9"}, {"center":"#ACC3DB","side":"#ACCADB"}, {"center":"#FFD1B6","side":"#F7A26F"}, {"center":"#EAC2E7","side":"#F989F0"}]
+				var opposite = 0;
+				var rows_count = 0;
+				var inPlay = true;
+				var distance = 0;
+				var total = 0;
+				var targetHeight = $(window).height() + 100
+				var speed = 7;
+				var loopSpeed =speed*100;
+				var winFlag = false
+				var life = 0
+				var colorsToUse = 2
 
-.hide { display: none; }
-
-.clear {
-	clear: both;
-}
-
-.left {float: left;}
-.right {float: right;]}
-/* RESET ZONE << */
-
-/* COLORS PALETTE >>
-	Green: #ACDBC9
-	Light Green: #DBEBC2
-	Orange: #FDD2B5
-	Peach: #F7A7A6
-	Red: #F48B94 
-COLORS PALETTE <<*/
-
-#gameTable {
-	max-width: 480px;
-}
-
-wrapper {
-    width: 100%;
-    height: 100%;
-}
-
-.color1 {
-	color: #ffb3ba;
-}
-
-.color2 {
-	color: #ffdfba;
-}
-
-.color3 {
-	color: #FFF1BA;
-}
-
-.color4 {
-	color: #baffc9;
-}
-
-.color5 {
-	color: #bae1ff;
-}
+				function createRow(row) {
+					var color1 = Math.floor(Math.random() * colorsToUse)
+					var color3 = Math.floor(Math.random() * colorsToUse)
+					console.log("Color1: "+color1)
+					console.log("Color3: "+color3)
+					if(color3 == color1) {
+						// Shitty solution, but array.splice(color1,0) didn't work
+						while(color3 == color1){
+								color3 = Math.floor(Math.random() * colorsToUse)
+						}
+					} 
+					var colorsSelected = [color1, color3]
+					var color2index = Math.floor(Math.random() * colorsSelected.length)
+					var color2 = colorsSelected[color2index]
 
 
+					var curr1 = $(document.createElement("div")).addClass("circleCont")
+					var currIn1 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color1].center}).attr("data-target",color1)
 
-header {
-	background-color: #DBEBC2;
-	line-height: 2.8em;
-	width: 100%;
-	height: 70px;
-	font-weight: bold;
-	font-size: 1.5em;
-	position: absolute;
-	z-index: 3;
-	background-color: #FFF;
-	-webkit-box-shadow: 0px 8px 15px 0px rgba(50, 50, 50, 0.1);
-	-moz-box-shadow:    0px 8px 15px 0px rgba(50, 50, 50, 0.1);
-	box-shadow:         0px 8px 15px 0px rgba(50, 50, 50, 0.1);
-	box-sizing: border-box;
-}
+					var curr2 = $(document.createElement("div")).addClass("circleCont center")
+					var currIn2 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color2].center}).attr("data-target",color2).css({"background-color":colorsList[color2].center}).attr("data-target",color2)
+					
+					var curr3 = $(document.createElement("div")).addClass("circleCont")
+					var currIn3 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color3].center}).attr("data-target",color3)
+					
+					
+					curr1.append(currIn1)
+					curr2.append(currIn2)
+					curr3.append(currIn3)
+					row.append(curr1, curr2, curr3)
 
-header div {
-	display: inline-block;
-	width: 48.99999999%;
-	box-sizing: border-box;
-	padding:2px 10px 10px 10px;
-}
+					game.append($(row))
+				}
 
-header .totalPoints {
-	text-align: right;
-	color: #CECECE;
-}
+				function play(){
+					var row = $(document.createElement("div")).addClass("row level_"+lvl).attr("id",rows_count)
+					rows_count++;
+					if(rows_count%2 == 0) {
+						row.addClass("grey")
+					}
+					$(".totalPoints").html(total)
+					if( $(".active").length ) {
+						distance = Math.round($(".active").eq(0).offset().top - row.offset().top)
+					}
+					if($(".row").length < 1) {
+						row.addClass("active")
+					}
+					
+					createRow(row)
 
-.progress {
-	padding: 0px;
-	position: absolute;
-	background-color: #DBEBC2;
-	height: 3px;
-	bottom: 0px;
-	width: 0px;
-	-webkit-transition: width 0.5s ease-in-out;
-	-moz-transition: width 0.5s ease-in-out;
-	-o-transition: width 0.5s ease-in-out;
-	transition: width 0.5s ease-in-out;
-}
+					//Binding gestures
+					setTimeout(function(){
+						row.addClass("falling").css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+					},200)
 
-main {
-	width: 100%;
-	position: relative;
-	margin:auto;
-	height: auto;
-	display: block;
-}
 
-#main_content {
-	padding-top: 20px;
-}
+				}
 
-.table {
-	display: table;
-	width: 100%;
-	height: 80px;
-}
+				function lost() {
+					if(life > 0) {
+						life = life-1
+					} else {
+						setTimeout(function(){
+							clearInterval(gameLoop)
+							inPlay = false
+							points = 0;
+							total = 0;
+							lvl = 1;
+							speed = targetHeight/100;
+							loopSpeed = targetHeight;
+							$(".row").remove()
+							$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+							$(".up").addClass("lost")
+							$(".progress").width("0px")
 
-.cell {
-	display: table-cell;
-	vertical-align: middle;
-	text-align: center;
-}
+						},200)
+					}
+					
+				}
 
-.doArea {
-	position: fixed;
-	width: 100%;
-	height: 130px;
-	background-color: #FAFAFA;
-	z-index: 1;
-	bottom: 0px;
-}
+				function win() {
+					colorsToUse++
+					$(".progress").width("0px")
+					lvl++
+					if(life < 3) {
+						life++
+					}
+					points = 0;
+					if(loopSpeed < 500 && loopSpeed > 260) {
+						loopSpeed = 500 - (lvl*25);
+						speed = 5 - (lvl*0.25);
+					} else if(loopSpeed < 260) {
+						loopSpeed = 250;
+						speed = 2.5;
+					} else {
+						loopSpeed = (speed-1) * loopSpeed / speed
+						speed = speed - 1
+					}
+						
+					restartLoop()
 
-.doArea > .done {
-	width: 5%;
-	height: 100%;
-	background-color: #F0FBDE;
-}
+				}
 
-.blur { 
-	position: absolute;
-	-webkit-filter:blur(10px);
-	filter: blur(10px);
-}
+				function restartLoop(){
+					clearInterval(gameLoop)
+					inPlay = true
+					$(".level_"+(lvl-1)).each(function(){
+							var nowHeight = targetHeight + $(this).offset().top
+							$(this).css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+						})
+					gameLoop = setInterval(function(){
+						//Calling play function which build the game
+						if(inPlay) {
+							play()
+						}
+					},loopSpeed)
+				}
 
-.field	{
-	width: 100%;
-	height: 100%;
-}
+				function replay(){
+					$(".field").html("")
+					inPlay = true;
+					points = 0;
+					total = 0;
+					lvl = 1;
+					loopSpeed = targetHeight;
+					speed = targetHeight/110;
+					$(".field")
+					$(".lost").removeClass("lost")
+					$(".progress").width("0px")
+					restartLoop()
+				}
 
-.down {
-	width: 100%;
-	position: absolute;
-	z-index: 5;
-	background-color: white;
-	border-spacing: 60px;
-}
+				//Set dimensions of game table
+				game.height($(window).height());
+				// $(".doArea").eq(0).css({"top":($(window).height()/2)-30})
+				$(".up").eq(0).height($(window).height() - $(".doArea").eq(0).height() - 70).css({"top":"70px"})
 
-.done {
-    text-align: center;
-    font-size: 5em;
-    color: #ACDBC9;
-    border-radius: 400px;
-    box-sizing: border-box;
-}
+				//Binding Replay
+				$(document).on("click","#replay",function(){
+					replay();
+				})
 
-.up {
-	position: absolute;
-	width: 100%;
-    text-align: center;
-    font-size: 5em;
-    color: #ACDBC9;
-    box-sizing: border-box;
-}
+				//Binding events Keyboard
+				$(document).keydown(function(e){
+					var activeID = $(".active").attr("id")
+					if (e.keyCode == 37) { 
+						$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
+						$(".active").removeClass("active")
+						$(".row:not(.disabled)").eq(0).addClass("active")
+						if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+							$("#"+activeID).removeClass("active")
+							if(parseInt($(".done").eq(0).html()) > 0){
+								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+							}
+								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+								points += 1
+								total += 1
+						} else {
+							lost()
+						}
+						return false;
+					}
 
-.up.lost, .down.lost .done {
-	color: #F48B94;
-	background-color: #white;
-	font-size: 30px;
-}
+					if (e.keyCode == 39) { 
+						$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
+						$(".active").removeClass("active")
+						$(".row:not(.disabled)").eq(0).addClass("active")
+						if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+							$("#"+activeID).removeClass("active")
+							if(parseInt($(".done").eq(0).html()) > 0){
+								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+							}
+								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+								points += 1
+								total += 1
+						} else {
+							lost()
+						}
+						return false;
+					}
+					if (e.keyCode == 13 && !inPlay) {
+						replay();
+					}
+				})
+				
+				//Binding events Touch
+				$(document).on("swipeleft",function(){
+					var activeID = $(".active").attr("id")
+					$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
+					$(".active").removeClass("active")
+					$(".row:not(.disabled)").eq(0).addClass("active")
+					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+						$("#"+activeID).removeClass("active")
+						if(parseInt($(".done").eq(0).html()) > 0){
+							$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+						}
+							$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+							$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+							points += 1
+							total += 1
+					} else {
+						lost()
+					}
+					return false;
+				})
 
-.up.lost .over {
-	margin-bottom: 20px;
-}
+				$(document).on("swiperight", function(){
+					var activeID = $(".active").attr("id")
+					$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
+					$(".active").removeClass("active")
+					$(".row:not(.disabled)").eq(0).addClass("active")
+					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+						$("#"+activeID).removeClass("active")
+						if(parseInt($(".done").eq(0).html()) > 0){
+							$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
+						}
+							$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
+							$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+							points += 1
+							total += 1
+					} else {
+						lost()
+					}
+					return false;
+				})
 
-.up.lost {
-	color: #F7A7A6;
-}
 
-.row, .alert_row {
-	display: block;
-	position: absolute;
-	width: 100%;
-	height: 80px;
-	top: 0px;
-	left: 0px;
-	z-index: 2;
- 	transform-origin: top;
-}
+				var gameLoop = setInterval(function(){
+					//Calling play function which build the game
+					if(inPlay) {
+						play()
+					}
+				},loopSpeed)
 
-.alert_row {
-	text-align: center;
-	font-size: 24px;
-	color: #F7A7A6;
-}
+				var gameCheck = setInterval(function(){
+					if(inPlay){
+						//Removing old rows
+						if($(".active").length) {
+							if($(".active").eq(0).offset().top >= targetHeight-100) {
+								lost()
+							}
+						}
+						//Removing from DOM old rows
+						if($(".disabled").length){
+							if($(".disabled").eq(0).offset().top >= targetHeight-100) {
+								$(".disabled").eq(0).remove()
+							}
+						}
+						if(points >= lvl*5) {
+							win()
+						}
+					}
+				}, 100)
 
-.row.grey {
-	background-color: #FAFAFA;
-}
 
-/*.active {
-	background-color: black;
-}*/
+})
+</script>
+</head>
+<body>
+	<wrapper>
+		<header>
+			<div class="progress"></div>
+			<div class="logo">
+				<span class="color1" >C</span>
+				<span class="color2" >o</span>
+				<span class="color3" >l</span>
+				<span class="color4" >o</span>
+				<span class="color5" >r</span>
+				<span class="color1" >s</span>
+				<span class="color1" >!</span>
+			</div>
+			<div class="totalPoints">0</div>
+		</header>
+		<main id="gameTable">
+			<div class="table up"><div class="field cell"></div></div>
+			<!-- <div class="doArea"></div> -->
+		</main>
+		<footer>
 
-.row.falling{
-	/*-webkit-transform: translateY(1000px);
-  	-moz-transform: translateY(1000px);
-  	transform: translateY(1000px);*/
-}
-
-.row > .circleCont {
-	padding-top: 10px;
-	display: inline-block;
-	width: 33.3333333%;
-	height: 80px;
-	text-align: center;
-}
-
-.circle {
-	width: 60px;
-	height: 60px;
-	border-radius: 100px;
-	margin: auto;
-	border: 2px solid #ACDBC9;
-}
-
-.circleCont.center .circle {
-	margin-top: 5px;
-	width: 50px;
-	height: 50px;
-	background-color: #DBEBC2;
-	border: 0px;
-}
-
-.circleCont.center {
-	transition: transform 0.1s linear;
-}
-
-.transLeft {
-	-webkit-transform: translateX(-100%);
-  	-moz-transform: translateX(-100%);
-  	transform: translateX(-100%);
-}
-
-.transRight{
-	-webkit-transform: translateX(100%);
-  	-moz-transform: translateX(100%);
-  	transform: translateX(100%);
-}
-
-#replay {
-    position: relative;
-    padding: 10px 40px;
-    border-radius: 10px;
-    font-size: 25px;
-    color: #FFF;
-    text-decoration: none;  
-    background-color: #F7A7A6;
-    border-bottom: 5px solid #F48B94;
-    text-shadow: 0px -2px #B7B7B7;
-    /* Animation */
-    transition: all 0.1s;
-    -webkit-transition: all 0.1s;
-}
+		</footer>
+	</wrapper>
+</body>
+</html>
