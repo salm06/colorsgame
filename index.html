@@ -110,7 +110,7 @@
 				function win() {
 					console.log("WIN")
 					
-					$(".field").html("")
+					
 					
 					$(".progress").width("0px")
 					lvl++
@@ -155,7 +155,8 @@
 					lvl = 1;
 					loopSpeed = targetHeight;
 					speed = targetHeight/110;
-
+	
+					$(".field").html("")
 					$(".lost").removeClass("lost")
 					$(".progress").width("0px")
 					restartLoop()
