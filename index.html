@@ -126,26 +126,23 @@
 				function win() {
 					clearInterval(gameLoop)
 					inPlay = false;
-					if(lvl%2 == 0 && colorsToUse < colorsList.length) {
+					if(lvl%3 == 0 && colorsToUse < colorsList.length) {
 						colorsToUse++	
 					}
 					$(".progress").width("0px")
 					lvl++
-					if(life < 3) {
+					if(life < 3 && lvl%2 == 0) {
 						life++
 						$(".lifeRow").append("<div class='life'></div>")
 					}
 					points = 0;
-					if(loopSpeed < 500 && loopSpeed > 260) {
-						loopSpeed = (speed-0.5) * targetHeight / resetSpeed
-						speed = speed - 0.5
-					} else 
 					if(loopSpeed < 260) {
 						loopSpeed = 250;
 						speed = (loopSpeed * resetSpeed / targetHeight);
 					} else {
-						loopSpeed = (speed-1) * targetHeight / resetSpeed
-						speed = speed - 1
+						var k = lvl/8
+						loopSpeed = (speed-k) * targetHeight / resetSpeed
+						speed = speed - k
 					}
 					console.log(loopSpeed, speed)
 					
@@ -208,7 +205,7 @@
 								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
 								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-								$(".progress").width( $(".progress").width() + ($(window).width() / (lvl*5)) )
+								$(".progress").width( $(".progress").width() + ($(window).width() / (lvl*3)) )
 								points += 1
 								total += 1
 						} else {
@@ -303,7 +300,7 @@
 								$(".disabled").eq(0).remove()
 							}
 						}
-						if(points >= lvl*5) {
+						if(points >= lvl*3) {
 							win()
 						}
 					}
