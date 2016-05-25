@@ -35,12 +35,12 @@
 				var distance = 0;
 				var total = 0;
 				var targetHeight = $(window).height() + 100
-				var loopSpeed = targetHeight;
-				var speed = targetHeight/110;
+				var speed = 7;
+				var loopSpeed =speed*100;
 				console.log(targetHeight)
 
 				function play(){
-					var row = $(document.createElement("div")).addClass("row level_"+lvl).css({"transition": "transform "+speed+"s linear"}).attr("id",rows_count)
+					var row = $(document.createElement("div")).addClass("row level_"+lvl).attr("id",rows_count)
 					rows_count++;
 					if(rows_count%2 == 0) {
 						row.addClass("grey")
@@ -81,69 +81,61 @@
 					}
 					game.append($(row))
 					//Binding gestures
-					
 					setTimeout(function(){
-						row.addClass("falling").css({"-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
-					},800)
+						row.addClass("falling").css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+					},200)
+					//console.log("CREATE ROW LEVEL "+lvl)
 
 
 				}
 
 				function lost() {
-					setTimeout(function(){
-						clearInterval(gameLoop)
-						inPlay = false
-						points = 0;
-						total = 0;
-						lvl = 1;
-						speed = targetHeight/100;
-						loopSpeed = targetHeight;
-						$(".row").remove()
-						$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
-						$(".up").addClass("lost")
-						$(".progress").width("0px")
+					// setTimeout(function(){
+					// 	clearInterval(gameLoop)
+					// 	inPlay = false
+					// 	points = 0;
+					// 	total = 0;
+					// 	lvl = 1;
+					// 	speed = targetHeight/100;
+					// 	loopSpeed = targetHeight;
+					// 	$(".row").remove()
+					// 	$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+					// 	$(".up").addClass("lost")
+					// 	$(".progress").width("0px")
 
-						},200)
+					// 	},200)
 				}
 
 				function win() {
-						$(".progress").width("0px")
-						inPlay = false
-						points = 0;
-						lvl++
-					if(loopSpeed < 500 && loopSpeed > 250) {
-							loopSpeed = 500 - (lvl*25);
-							speed = 5 - (lvl*0.25);
-						} else if(loopSpeed < 250) {
-							loopSpeed = 250;
-							speed = 2.5;
-						} else {
-							loopSpeed = (speed-1) * loopSpeed / speed
-							speed = speed - 1
-						}
-						console.log(loopSpeed, speed, loopSpeed < 250)
-						inPlay = true
-						$(".falling").each(function(){
-							var computedPosition = $(this).offset().top
-							$(this).css({"transition": "transform "+speed+"s linear", "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
-						})
-						restartLoop()
+					console.log("WIN")
+					$(".progress").width("0px")
+					lvl++
+					inPlay = false
+					points = 0;
+					if(loopSpeed < 500 && loopSpeed > 260) {
+						loopSpeed = 500 - (lvl*25);
+						speed = 5 - (lvl*0.25);
+					} else if(loopSpeed < 260) {
+						loopSpeed = 250;
+						speed = 2.5;
+					} else {
+						loopSpeed = (speed-1) * loopSpeed / speed
+						speed = speed - 1
+					}
+						
+					restartLoop()
 
-					// setTimeout(function(){
-					// 	inPlay = true;
-					// 	$(".done").eq(0).html("20")
-					// 	$(".field").html("")
-					// }, 2000)
 				}
 
 				function restartLoop(){
 					clearInterval(gameLoop)
+					inPlay = true
 					gameLoop = setInterval(function(){
-							//Calling play function which build the game
-							if(inPlay) {
-								play()
-							}
-						},loopSpeed)
+						//Calling play function which build the game
+						if(inPlay) {
+							play()
+						}
+					},loopSpeed)
 				}
 
 				function replay(){
@@ -151,8 +143,9 @@
 					points = 0;
 					total = 0;
 					lvl = 1;
-					$(".done").eq(0).html("20")
-					$(".field").html("")
+					loopSpeed = targetHeight;
+					speed = targetHeight/110;
+
 					$(".lost").removeClass("lost")
 					$(".progress").width("0px")
 					restartLoop()
@@ -180,15 +173,10 @@
 							if(parseInt($(".done").eq(0).html()) > 0){
 								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
-							if(points >= 2) {
-								win()
-								return false;
-							} else {
 								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
 								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 								points += 1
-								total += 1*lvl
-							}
+								total += 1
 						} else {
 							lost()
 						}
@@ -204,15 +192,10 @@
 							if(parseInt($(".done").eq(0).html()) > 0){
 								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
-							if(points >= 2) {
-								win()
-								return false;
-							} else {
 								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
 								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 								points += 1
-								total += 1*lvl
-							}
+								total += 1
 						} else {
 							lost()
 						}
@@ -234,15 +217,10 @@
 						if(parseInt($(".done").eq(0).html()) > 0){
 							$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 						}
-						if(points >= 20) {
-							win()
-							return false;
-						} else {
 							$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
 							$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 							points += 1
-							total += 1*lvl
-						}
+							total += 1
 					} else {
 						lost()
 					}
@@ -259,15 +237,10 @@
 						if(parseInt($(".done").eq(0).html()) > 0){
 							$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 						}
-						if(points >= 20) {
-							win()
-							return false;
-						} else {
 							$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
 							$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 							points += 1
-							total += 1*lvl
-						}
+							total += 1
 					} else {
 						lost()
 					}
@@ -295,6 +268,9 @@
 							if($(".disabled").eq(0).offset().top >= targetHeight-100) {
 								$(".disabled").eq(0).remove()
 							}
+						}
+						if(points >= lvl*5) {
+							win()
 						}
 					}
 				}, 100)
