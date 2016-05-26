@@ -41,47 +41,76 @@
 				var life = 0
 				var colorsToUse = 2
 
+				var gameLvl = 1
+				var toWin = gameLvl * 3
+				var remaining = gameLvl*3
+				var newLevelRow = false
+
 				console.log(loopSpeed, speed)
 
 				function createRow(row) {
-					var color1 = Math.floor(Math.random() * colorsToUse)
-					var color3 = Math.floor(Math.random() * colorsToUse)
-					if(color3 == color1) {
-						// Shitty solution, but array.splice(color1,0) didn't work
-						while(color3 == color1){
-								color3 = Math.floor(Math.random() * colorsToUse)
-						}
-					} 
-					var colorsSelected = [color1, color3]
-					var color2index = Math.floor(Math.random() * colorsSelected.length)
-					var color2 = colorsSelected[color2index]
+					if(newLevelRow){
+						row.addClass("alert_row table disabled").addClass("falling")
+						var levelRowIn = $(document.createElement("div")).addClass("cell").html("Level" + gameLvl)
+						row.append(levelRowIn)
+						game.append(row)
+						//Binding gestures
+						setTimeout(function(){
+							// row.addClass("falling").css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+							win();
+						},200)
+						newLevelRow = false
+					} else {
+						var color1 = Math.floor(Math.random() * colorsToUse)
+						var color3 = Math.floor(Math.random() * colorsToUse)
+						if(color3 == color1) {
+							// Shitty solution, but array.splice(color1,0) didn't work
+							while(color3 == color1){
+									color3 = Math.floor(Math.random() * colorsToUse)
+							}
+						} 
+						var colorsSelected = [color1, color3]
+						var color2index = Math.floor(Math.random() * colorsSelected.length)
+						var color2 = colorsSelected[color2index]
 
 
-					var curr1 = $(document.createElement("div")).addClass("circleCont")
-					var currIn1 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color1].center}).attr("data-target",color1)
+						var curr1 = $(document.createElement("div")).addClass("circleCont")
+						var currIn1 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color1].center}).attr("data-target",color1)
 
-					var curr2 = $(document.createElement("div")).addClass("circleCont center")
-					var currIn2 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color2].center}).attr("data-target",color2).css({"background-color":colorsList[color2].center}).attr("data-target",color2)
+						var curr2 = $(document.createElement("div")).addClass("circleCont center")
+						var currIn2 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color2].center}).attr("data-target",color2).css({"background-color":colorsList[color2].center}).attr("data-target",color2)
+						
+						var curr3 = $(document.createElement("div")).addClass("circleCont")
+						var currIn3 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color3].center}).attr("data-target",color3)
+						
+						
+						curr1.append(currIn1)
+						curr2.append(currIn2)
+						curr3.append(currIn3)
+						row.append(curr1, curr2, curr3)
+					}
 					
-					var curr3 = $(document.createElement("div")).addClass("circleCont")
-					var currIn3 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color3].center}).attr("data-target",color3)
-					
-					
-					curr1.append(currIn1)
-					curr2.append(currIn2)
-					curr3.append(currIn3)
-					row.append(curr1, curr2, curr3)
 
-					game.append($(row))
+					game.append(row)
 				}
 
 				function play(){
-					var row = $(document.createElement("div")).addClass("row level_"+lvl).attr("id",rows_count)
+					console.log("Game LvL: "+gameLvl)
+					remaining = remaining - 1;
+					if( remaining <= 0) {
+						newLevelRow = true
+						gameLvl++
+						toWin = gameLvl * 3
+						remaining = gameLvl*3
+
+					}
+					var row = $(document.createElement("div")).addClass("row level_"+gameLvl).attr("id",rows_count)
 					rows_count++;
+
+
 					if(rows_count%2 == 0) {
 						row.addClass("grey")
 					}
-					$(".totalPoints").html(total)
 					if( $(".active").length ) {
 						distance = Math.round($(".active").eq(0).offset().top - row.offset().top)
 					}
@@ -106,17 +135,21 @@
 					} else {
 						setTimeout(function(){
 							clearInterval(gameLoop)
+							$(".field").html("<div class='finalScore'>"+total+"</div><div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
 							inPlay = false
 							points = 0;
-							total = 0;
 							lvl = 1;
 							colorsToUse = 2
+							newLevelRow = false
+							gameLvl = 1
+							toWin = gameLvl * 3
+							remaining = gameLvl*3
 							speed = targetHeight/100;
 							loopSpeed = targetHeight;
 							$(".row").remove()
-							$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
 							$(".up").addClass("lost")
 							$(".progress").width("0px")
+							total = 0;
 
 						},200)
 					}
@@ -124,7 +157,6 @@
 				}
 
 				function win() {
-					clearInterval(gameLoop)
 					inPlay = false;
 					if(lvl%3 == 0 && colorsToUse < colorsList.length) {
 						colorsToUse++	
@@ -136,7 +168,12 @@
 						$(".lifeRow").append("<div class='life'></div>")
 					}
 					points = 0;
-					if(loopSpeed < 260) {
+					if(loopSpeed < 500 && loopSpeed > 260) {
+						console.log("Between")
+						var k = lvl/7
+						loopSpeed = (speed-k) * targetHeight / resetSpeed
+						speed = speed - k
+					} else if(loopSpeed < 260) {
 						loopSpeed = 250;
 						speed = (loopSpeed * resetSpeed / targetHeight);
 					} else {
@@ -145,47 +182,74 @@
 						speed = speed - k
 					}
 					console.log(loopSpeed, speed)
-					
 					restartLoop()
-
 				}
 
 				function restartLoop(){
 					clearInterval(gameLoop)
-					$(".level_"+(lvl-1)).each(function(){
-							var nowHeight = targetHeight + $(this).offset().top
-							$(this).css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
-						})
+					if(  $(".row").length ) {
+						var elems = $(".row").nextAll(), count = elems.length;
+						 $(".row").each(function(){
+								var nowHeight = targetHeight + $(this).offset().top
+								$(this).css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+								if (!--count) {
+									inPlay = true
+										gameLoop = setInterval(function(){
+											//Calling play function which build the game
+											if(inPlay) {
+												play()
+											}
+										},loopSpeed)
+								}
+							})
+					} else {
+						gameLoop = setInterval(function(){
+							//Calling play function which build the game
+							if(inPlay) {
+								play()
+							}
+						},loopSpeed)
+					}
 
-					inPlay = true
-					gameLoop = setInterval(function(){
-						//Calling play function which build the game
-						if(inPlay) {
-							play()
-						}
-					},loopSpeed)
+					
 				}
 
 				function replay(){
 					$(".field").html("")
-					inPlay = true;
 					points = 0;
 					total = 0;
 					lvl = 1;
 					life = 0;
 					colorsToUse = 2
+					newLevelRow = false
+					gameLvl = 1
+					toWin = gameLvl * 3
+					remaining = gameLvl*3
 					loopSpeed = targetHeight;
 					speed = targetHeight/110;
-					$(".field")
 					$(".lost").removeClass("lost")
 					$(".progress").width("0px")
+					inPlay = true;
 					restartLoop()
+				}
+
+				function stopGame() {
+					clearInterval(gameLoop)
+					inPlay = false
+					$(".row").each(function(){
+						var nowHeight = $(this).offset().top + 1
+						$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+					})
+					$(".alert_row").each(function(){
+						var nowHeight = $(this).offset().top + 1
+						$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+					})
 				}
 
 				//Set dimensions of game table
 				game.height($(window).height());
 				// $(".doArea").eq(0).css({"top":($(window).height()/2)-30})
-				$(".up").eq(0).height($(window).height() - $(".doArea").eq(0).height() - 70).css({"top":"70px"})
+				$(".up").eq(0).height($(window).height() - $(".doArea").eq(0).height() - 70)
 
 				//Binding Replay
 				$(document).on("click","#replay",function(){
@@ -194,7 +258,7 @@
 
 				//Binding events Keyboard
 				$(document).keydown(function(e){
-					var activeID = $(".active").attr("id")
+					var activeID = $(".active:not(.disabled)").attr("id")
 					if (e.keyCode == 37) { 
 						$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
 						$(".active").removeClass("active")
@@ -204,7 +268,6 @@
 							if(parseInt($(".done").eq(0).html()) > 0){
 								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
-								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
 								$(".progress").width( $(".progress").width() + ($(window).width() / (lvl*3)) )
 								points += 1
 								total += 1
@@ -223,7 +286,6 @@
 							if(parseInt($(".done").eq(0).html()) > 0){
 								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 							}
-								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
 								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 								points += 1
 								total += 1
@@ -235,11 +297,14 @@
 					if (e.keyCode == 13 && !inPlay) {
 						replay();
 					}
+					if (e.keyCode == 32 ) {
+						stopGame();
+					}
 				})
 				
 				//Binding events Touch
 				$(document).on("swipeleft",function(){
-					var activeID = $(".active").attr("id")
+					var activeID = $(".active:not(.disabled)").attr("id")
 					$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
 					$(".active").removeClass("active")
 					$(".row:not(.disabled)").eq(0).addClass("active")
@@ -248,7 +313,6 @@
 						if(parseInt($(".done").eq(0).html()) > 0){
 							$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 						}
-							$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
 							$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 							points += 1
 							total += 1
@@ -259,7 +323,7 @@
 				})
 
 				$(document).on("swiperight", function(){
-					var activeID = $(".active").attr("id")
+					var activeID = $(".active:not(.disabled)").attr("id")
 					$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
 					$(".active").removeClass("active")
 					$(".row:not(.disabled)").eq(0).addClass("active")
@@ -268,7 +332,6 @@
 						if(parseInt($(".done").eq(0).html()) > 0){
 							$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
 						}
-							$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
 							$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 							points += 1
 							total += 1
@@ -300,9 +363,11 @@
 								$(".disabled").eq(0).remove()
 							}
 						}
-						if(points >= lvl*3) {
-							win()
+
+						if( parseInt($(".totalPoints").html()) != total ) {
+							$(".totalPoints").html(total)
 						}
+
 					}
 				}, 100)
 
