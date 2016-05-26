@@ -101,7 +101,7 @@ wrapper {
 }
 
 .color4 {
-	color: #baffc9;
+	color: #DBEBC2;
 }
 
 .color5 {
@@ -236,6 +236,13 @@ main {
 	margin-bottom: 20px;
 }
 
+.up.lost .finalScore {
+	font-size: 100px;
+	color: #CECECE;
+	padding-bottom: 20px;
+}
+
+
 .up.lost {
 	color: #F7A7A6;
 }
@@ -252,9 +259,14 @@ main {
 }
 
 .alert_row {
+	height: 50px;
 	text-align: center;
 	font-size: 24px;
 	color: #F7A7A6;
+}
+
+.alert_row.table {
+	display: table;
 }
 
 .row.grey {
