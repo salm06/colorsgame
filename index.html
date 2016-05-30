@@ -33,15 +33,14 @@
 				var inPlay = true;
 				var distance = 0;
 				var total = 0;
-				var targetHeight = $(window).height() + 100
-				var resetSpeed = 6
-				var speed = 6
-				var resetLoopSpeed = 6*100
-				var loopSpeed = 6*100;
+				var targetHeight = $(window).height() + 90
+				var resetSpeed = (targetHeight+20)/160;
+				var c = lvl
+				var speed = (targetHeight+20)/160
+				var loopSpeed =  ((speed-c) * targetHeight / resetSpeed)
 				var winFlag = false
 				var life = 0
 				var colorsToUse = 2
-
 				var gameLvl = 1
 				var toWin = 11
 				var remaining = 11
@@ -51,6 +50,7 @@
 				var rows_to_special =  Math.floor(Math.random() * 20)+10
 				var remaining_to_special = 0
 
+				console.log("Start",loopSpeed, speed)
 
 				function createRow(row) {
 					if(newLevelRow){
@@ -66,7 +66,6 @@
 						},200)
 						newLevelRow = false
 					} else {
-						console.log(remaining_to_special, rows_to_special)
 						if(remaining_to_special ==  rows_to_special) {
 							remaining_to_special = 0;
 							rows_to_special =  Math.floor(Math.random() * 30) + 10
@@ -186,14 +185,14 @@
 					console.log("Before",loopSpeed, speed)
 					if(loopSpeed < 520 && loopSpeed > 320) {
 						var k = lvl/8
-						loopSpeed = (speed-k) * resetLoopSpeed / resetSpeed
+						loopSpeed = (speed-k) * targetHeight / resetSpeed
 						speed = speed - k
 					} else if(loopSpeed < 320) {
 						loopSpeed = 300;
-						speed = (loopSpeed * resetSpeed / resetLoopSpeed);
+						speed = (loopSpeed * resetSpeed / targetHeight);
 					} else {
 						var k = lvl/4
-						loopSpeed = (speed-k) * resetLoopSpeed / resetSpeed
+						loopSpeed = (speed-k) * targetHeight / resetSpeed
 						speed = speed - k
 					}
 					console.log("After",loopSpeed, speed)
@@ -417,9 +416,8 @@
 						if(loopSpeed < 300) {
 							inPlay = false;
 							loopSpeed = 300;
-							speed = 3
+							speed = (loopSpeed * resetSpeed / targetHeight);
 							restartLoop()
-							console.log(loopSpeed,speed)
 						}
 
 						if(rows_to_special%11 == 0) {
