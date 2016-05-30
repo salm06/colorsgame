@@ -322,7 +322,7 @@
 					clearInterval(gameLoop)
 				
 					$(".row").each(function(){
-						$(this).addClass("disabled")
+						$(this).addClass("disabled").removeClass("active")
 					})
 					var elems = $(".disabled").nextAll(), count = elems.length;
 					$(".disabled").each(function(){
@@ -413,7 +413,7 @@
 						}
 
 						if($(".active").length < 1) {
-							$(".toActivate").eq(0).removeClass("toActivate").addClass("active")
+							$(".row:not(.alert_row)").eq(0).removeClass("toActivate").addClass("active")
 						}
 
 						if(loopSpeed < 300) {
