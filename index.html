@@ -34,9 +34,9 @@
 				var distance = 0;
 				var total = 0;
 				var targetHeight = $(window).height() + 100
-				var resetSpeed = targetHeight/120;
+				var resetSpeed = (targetHeight+20)/120;
 				var loopSpeed = targetHeight;
-				var speed = targetHeight/120;
+				var speed = (targetHeight+20)/120
 				var winFlag = false
 				var life = 0
 				var colorsToUse = 2
@@ -152,6 +152,7 @@
 							$(".row").css({"background-color":"transparent"})
 							$(".field").html("<div class='finalScore'>"+total+"</div><div class='over'><span class='color1'>G</span><span class='color2'>A</span><span class='color3'>M</span><span class='color4'>E</span><span class='color5'> </span>O<span class='color1'>V</span><span class='color2'>E</span><span class='color3'>R</span></div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
 							$(".up").css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+($(window).height()/2 + 300)+"px)", "-moz-transform": "translateY("+($(window).height()/2 + 300)+"px)", "transform": "translateY("+($(window).height()/2 + 300)+"px)"})
+							$(".totalPoints").html(total)
 							inPlay = false
 							points = 0;
 							lvl = 1;
