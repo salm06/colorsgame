@@ -199,6 +199,8 @@ main {
 .field	{
 	width: 100%;
 	height: 100%;
+	position: absolute;
+    	top: -500px;
 }
 
 .down {
@@ -259,6 +261,7 @@ main {
 }
 
 .alert_row {
+	background-color: #FFF !important; 
 	height: 50px;
 	text-align: center;
 	font-size: 24px;
@@ -269,22 +272,27 @@ main {
 	display: table;
 }
 
+.alert_row .cell {
+	height: 80px;
+	top: -15px;
+	position: relative;
+}
 .row.grey {
 	background-color: #FAFAFA;
 }
 
 /*.active {
 	background-color: black;
-}*/
+	}*/
 
-.row.falling{
+	.row.falling{
 	/*-webkit-transform: translateY(1000px);
   	-moz-transform: translateY(1000px);
   	transform: translateY(1000px);*/
-}
+  }
 
-.row > .circleCont {
-	padding-top: 10px;
+  .row > .circleCont {
+  	padding-top: 10px;
 	display: inline-block;
 	width: 33.3333333%;
 	height: 80px;
