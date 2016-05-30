@@ -46,6 +46,10 @@
 				var remaining = 11
 				var newLevelRow = false
 
+				var special = ""
+				var rows_to_special =  Math.floor(Math.random() * 30)+10
+				var remaining_to_special = 0
+
 
 				function createRow(row) {
 					if(newLevelRow){
@@ -61,6 +65,17 @@
 						},200)
 						newLevelRow = false
 					} else {
+						console.log(remaining_to_special, rows_to_special)
+						if(remaining_to_special ==  rows_to_special) {
+							remaining_to_special = 0;
+							rows_to_special =  Math.floor(Math.random() * 30) + 10
+							special = "special"
+						} else {
+							special = ""
+						}
+
+						row.addClass(special)
+
 						var color1 = Math.floor(Math.random() * colorsToUse)
 						var color3 = Math.floor(Math.random() * colorsToUse)
 						if(color3 == color1) {
@@ -77,8 +92,9 @@
 						var curr1 = $(document.createElement("div")).addClass("circleCont")
 						var currIn1 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color1].center}).attr("data-target",color1)
 
+						
 						var curr2 = $(document.createElement("div")).addClass("circleCont center")
-						var currIn2 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color2].center}).attr("data-target",color2).css({"background-color":colorsList[color2].center}).attr("data-target",color2)
+						var currIn2 = $(document.createElement("div")).addClass("circle "+special).css({"border-color":colorsList[color2].center}).attr("data-target",color2).css({"background-color":colorsList[color2].center}).attr("data-target",color2)
 						
 						var curr3 = $(document.createElement("div")).addClass("circleCont")
 						var currIn3 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color3].center}).attr("data-target",color3)
@@ -105,6 +121,7 @@
 					}
 					var row = $(document.createElement("div")).addClass("row toActivate level_"+gameLvl).attr("id",rows_count)
 					rows_count++;
+					remaining_to_special++;
 
 
 					if(rows_count%2 == 0) {
@@ -255,10 +272,15 @@
 						$("#"+nextID).removeClass("toActivate").addClass("active")
 					}
 
-					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
+					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target") && !$("#"+activeID).hasClass("special")) {
 						$(".progress").width( $(".progress").width() + ($(window).width() / (lvl*3)) )
 						points += 1
 						total += 1
+					} else if($("#"+activeID).hasClass("special")) {
+						$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+						points += 1
+						total += 1
+						rainbowEffect()
 					} else {
 						lost()
 					}
@@ -272,10 +294,15 @@
 						$("#"+nextID).removeClass("toActivate").addClass("active")
 					}
 
-					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
+					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target") && !$("#"+activeID).hasClass("special")) {
 						$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 						points += 1
 						total += 1
+					} else if($("#"+activeID).hasClass("special")) {
+						$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
+						points += 1
+						total += 1
+						rainbowEffect()
 					} else {
 						lost()
 					}
@@ -283,11 +310,32 @@
 
 				function makeFall(){
 					clearInterval(gameLoop)
+				
 					$(".circleCont").each(function(){
 						var fallSpeed =  Math.floor(Math.random() * 1.5) + 1
 						var floorHeight = $(window).height()
 						$(this).css({"transition": "transform "+fallSpeed+"s ease-in" , "-webkit-transform": "translateY("+floorHeight+"px)", "-moz-transform": "translateY("+floorHeight+"px)", "transform": "translateY("+floorHeight+"px)"})
 					})
+				}
+
+				function rainbowEffect() {
+					clearInterval(gameLoop)
+				
+					$(".row").each(function(){
+						$(this).addClass("disabled")
+					})
+					var elems = $(".disabled").nextAll(), count = elems.length;
+					$(".disabled").each(function(){
+						if (!--count) {
+							setTimeout(function(){
+								makeFall()
+								restartLoop();
+							},300)
+						}
+					})
+						
+				
+					
 				}
 
 				//Set dimensions of game table
@@ -348,8 +396,8 @@
 				var gameCheck = setInterval(function(){
 					if(inPlay){
 						//Removing old rows
-						if($(".active").length) {
-							if($(".active").eq(0).offset().top >= targetHeight-100) {
+						if($(".active:not(.disabled)").length) {
+							if($(".active:not(.disabled)").eq(0).offset().top >= targetHeight-100) {
 								lost()
 							}
 						}
@@ -376,6 +424,9 @@
 							console.log(loopSpeed,speed)
 						}
 
+						if(rows_to_special%11 == 0) {
+							rows_to_special =  Math.floor(Math.random() * 30)+10
+						}
 					}
 				}, 100)
 
