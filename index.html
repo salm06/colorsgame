@@ -27,20 +27,20 @@
 				var lvl = 1;
 				var points = 0;
 				var toSelect = 0;
-				var colorsList =  [{"center":"#F7A7A6","side":"#F48B94"},{"center":"#DBEBC2","side":"#ACDBC9"}, {"center":"#ACC3DB","side":"#ACCADB"}, {"center":"#FFD1B6","side":"#F7A26F"}, {"center":"#EAC2E7","side":"#F989F0"}]
+				var colorsList =  [{"center":"#F7A7A6","side":"#F48B94"},{"center":"#DBEBC2","side":"#ACDBC9"}, {"center":"#ACC3DB","side":"#ACCADB"}, {"center":"#EAC2E7","side":"#F989F0"}, {"center":"#FFD1B6","side":"#F7A26F"}]
 				var opposite = 0;
 				var rows_count = 0;
 				var inPlay = true;
 				var distance = 0;
 				var total = 0;
-				var targetHeight = $(window).height() + 90
+				var targetHeight = $(window).height() + 100
 				var resetSpeed = (targetHeight+20)/160;
-				var c = lvl
+				var loopSpeed = targetHeight;
 				var speed = (targetHeight+20)/160
-				var loopSpeed =  ((speed-c) * targetHeight / resetSpeed)
 				var winFlag = false
 				var life = 0
 				var colorsToUse = 2
+
 				var gameLvl = 1
 				var toWin = 11
 				var remaining = 11
@@ -50,7 +50,6 @@
 				var rows_to_special =  Math.floor(Math.random() * 20)+10
 				var remaining_to_special = 0
 
-				console.log("Start",loopSpeed, speed)
 
 				function createRow(row) {
 					if(newLevelRow){
@@ -66,6 +65,7 @@
 						},200)
 						newLevelRow = false
 					} else {
+						console.log(remaining_to_special, rows_to_special)
 						if(remaining_to_special ==  rows_to_special) {
 							remaining_to_special = 0;
 							rows_to_special =  Math.floor(Math.random() * 30) + 10
@@ -146,12 +146,12 @@
 						life = life-1
 						$(".lifeRow").eq(0).remove()
 					} else {
-						clearInterval(gameLoop)
 						setTimeout(function(){
+							clearInterval(gameLoop)
 							makeFall()
 							$(".row").css({"background-color":"transparent"})
 							$(".field").html("<div class='finalScore'>"+total+"</div><div class='over'><span class='color1'>G</span><span class='color2'>A</span><span class='color3'>M</span><span class='color4'>E</span><span class='color5'> </span>O<span class='color1'>V</span><span class='color2'>E</span><span class='color3'>R</span></div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
-							$(".up").css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+($(window).height()/2 + 300)+"px)", "-moz-transform": "translateY("+($(window).height()/2 + 300)+"px)", "transform": "translateY("+($(window).height()/2 + 300)+"px)"})
+							$(".up").css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)", "-moz-transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)", "transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)"})
 							$(".totalPoints").html(total)
 							inPlay = false
 							points = 0;
@@ -161,7 +161,7 @@
 							gameLvl = 1
 							toWin = 11
 							remaining = 11
-							speed = targetHeight/100;
+							speed = (targetHeight+20)/160;;
 							loopSpeed = targetHeight;
 							$(".up").addClass("lost")
 							$(".progress").width("0px")
@@ -183,15 +183,16 @@
 					}
 					points = 0;
 					console.log("Before",loopSpeed, speed)
-					if(loopSpeed < 520 && loopSpeed > 320) {
-						var k = lvl/8
-						loopSpeed = (speed-k) * targetHeight / resetSpeed
-						speed = speed - k
-					} else if(loopSpeed < 320) {
-						loopSpeed = 300;
+					// if(loopSpeed < 520 && loopSpeed > 320) {
+					// 	var k = 0.6/lvl
+					// 	loopSpeed = (speed-k) * targetHeight / resetSpeed
+					// 	speed = speed - k
+					// } else 
+					if(loopSpeed < 340) {
+						loopSpeed = 320;
 						speed = (loopSpeed * resetSpeed / targetHeight);
 					} else {
-						var k = lvl/4
+						var k = 1/lvl*2
 						loopSpeed = (speed-k) * targetHeight / resetSpeed
 						speed = speed - k
 					}
@@ -242,7 +243,7 @@
 					toWin = 11
 					remaining = 11
 					loopSpeed = targetHeight;
-					speed = targetHeight/110;
+					speed = (targetHeight+20)/160;
 					$(".lost").removeClass("lost")
 					$(".progress").width("0px")
 					restartLoop()
@@ -413,11 +414,12 @@
 							$(".row:not(.disabled)").eq(0).removeClass("toActivate").addClass("active")
 						}
 
-						if(loopSpeed < 300) {
+						if(loopSpeed < 320) {
 							inPlay = false;
-							loopSpeed = 300;
+							loopSpeed = 320;
 							speed = (loopSpeed * resetSpeed / targetHeight);
 							restartLoop()
+							console.log(loopSpeed,speed)
 						}
 
 						if(rows_to_special%11 == 0) {
