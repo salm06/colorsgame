@@ -150,7 +150,8 @@
 							clearInterval(gameLoop)
 							makeFall()
 							$(".row").css({"background-color":"transparent"})
-							$(".field").html("<div class='finalScore'>"+total+"</div><div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>").css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+(targetHeight-50)+"px)", "-moz-transform": "translateY("+(targetHeight-50)+"px)", "transform": "translateY("+(targetHeight-50)+"px)"})
+							$(".field").html("<div class='finalScore'>"+total+"</div><div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+							$(".up").css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+($(window).height()/2 + 300)+"px)", "-moz-transform": "translateY("+($(window).height()/2 + 300)+"px)", "transform": "translateY("+($(window).height()/2 + 300)+"px)"})
 							inPlay = false
 							points = 0;
 							lvl = 1;
@@ -338,7 +339,7 @@
 				//Set dimensions of game table
 				game.height($(window).height());
 				// $(".doArea").eq(0).css({"top":($(window).height()/2)-30})
-				$(".up").eq(0).height($(window).height() - $(".doArea").eq(0).height() - 70)
+				// $(".up").eq(0).height($(window).height() - $(".doArea").eq(0).height() - 70)
 
 				//Binding Replay
 				$(document).on("click","#replay",function(){
