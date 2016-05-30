@@ -150,7 +150,7 @@
 							clearInterval(gameLoop)
 							makeFall()
 							$(".row").css({"background-color":"transparent"})
-							$(".field").html("<div class='finalScore'>"+total+"</div><div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+							$(".field").html("<div class='finalScore'>"+total+"</div><div class='over'><span class='color1'>G</span><span class='color2'>A</span><span class='color3'>M</span><span class='color4'>E</span><span class='color5'> </span>O<span class='color1'>V</span><span class='color2'>E</span><span class='color3'>R</span></div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
 							$(".up").css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+($(window).height()/2 + 300)+"px)", "-moz-transform": "translateY("+($(window).height()/2 + 300)+"px)", "transform": "translateY("+($(window).height()/2 + 300)+"px)"})
 							inPlay = false
 							points = 0;
@@ -306,7 +306,7 @@
 
 				function makeFall(){
 					clearInterval(gameLoop)
-					
+
 					$(".circleCont").each(function(){
 						var fallSpeed =  Math.floor(Math.random() * 1.5) + 1
 						var floorHeight = $(window).height()
@@ -316,7 +316,7 @@
 
 				function rainbowEffect() {
 					clearInterval(gameLoop)
-					
+
 					$(".row").each(function(){
 						$(this).addClass("disabled").removeClass("active")
 					})
@@ -329,8 +329,8 @@
 							},300)
 						}
 					})
-					
-					
+
+
 					
 				}
 
