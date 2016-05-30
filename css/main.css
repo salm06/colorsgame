@@ -135,7 +135,7 @@ header div {
 
 header .totalPoints {
 	text-align: right;
-	color: #E8E8E8;
+	color: #CECECE;
 }
 
 .progress {
@@ -239,7 +239,7 @@ main {
 
 .up.lost .finalScore {
 	font-size: 100px;
-	color: #E8E8E8;
+	color: #CECECE;
 	padding-bottom: 20px;
 }
 
