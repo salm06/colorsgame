@@ -164,8 +164,6 @@
 							loopSpeed = targetHeight;
 							$(".up").addClass("lost")
 							$(".progress").width("0px")
-							total = 0;
-
 						},200)
 					}
 					
@@ -308,7 +306,7 @@
 
 				function makeFall(){
 					clearInterval(gameLoop)
-				
+					
 					$(".circleCont").each(function(){
 						var fallSpeed =  Math.floor(Math.random() * 1.5) + 1
 						var floorHeight = $(window).height()
@@ -318,7 +316,7 @@
 
 				function rainbowEffect() {
 					clearInterval(gameLoop)
-				
+					
 					$(".row").each(function(){
 						$(this).addClass("disabled").removeClass("active")
 					})
@@ -331,8 +329,8 @@
 							},300)
 						}
 					})
-						
-				
+					
+					
 					
 				}
 
