@@ -70,7 +70,6 @@
 						},200)
 						newLevelRow = false
 					} else {
-						console.log(rows_to_special)
 						if(remaining_to_special ==  rows_to_special) {
 							remaining_to_special = 0;
 							rows_to_special =  Math.floor(Math.random() * 30) + 10
@@ -204,7 +203,11 @@
 						loopSpeed = 320;
 						speed = (loopSpeed * resetSpeed / targetHeight);
 					} else {
-						var k = 1/lvl*2
+						if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+							var k = 1/lvl
+						} else {
+							var k = 1/lvl*2.3
+						}
 						loopSpeed = (speed-k) * targetHeight / resetSpeed
 						speed = speed - k
 					}
@@ -302,7 +305,6 @@
 					}
 
 
-					console.log(progressWidth)
 					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target") && !$("#"+activeID).hasClass("special")) {
 						points += 1
 						total += 1
@@ -347,6 +349,11 @@
 				}
 
 				//Set dimensions of game table
+				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+					console.log("MOBILE")
+				} else {
+					console.log("FULL")
+				}
 				$(".best").html(bestScore)
 				$(".panel").eq(0).css({
 					"top": ($(window).height()/2) - ($(".panel").height()/2),
