@@ -234,7 +234,9 @@
 				function replay(){
 					$(".back").eq(0).css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY(-"+$(window).height()+"px)", "-moz-transform": "translateY(-"+$(window).height()+"px)", "transform": "translateY(-"+$(window).height()+"px)"})
 					setTimeout(function(){
-						$(".row, .finalScore, .over_button").remove()
+						$(".row").remove()
+						$(".finalScore").remove()
+						$(".over_button").remove()
 					},1000)
 					$(".lost").removeClass("lost")
 					points = 0;
