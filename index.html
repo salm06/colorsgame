@@ -192,7 +192,7 @@
 					if(life < 3 && lvl%2 == 0) {
 						life++
 						$(".lifeRow").append("<div class='life'></div>")
-						$(".alert_row").eq(0).find(".cell").append("<div>+1 <div class='alignLife'><span class='lifeEarned'></span></div></div>")
+						$(".alert_row").eq(0).find(".cell").append("<div class='separator'>+1 <div class='alignLife'><span class='lifeEarned'></span></div></div>")
 					}
 					points = 0;
 					// if(loopSpeed < 520 && loopSpeed > 320) {
@@ -242,6 +242,7 @@
 				}
 
 				function replay(){
+					rows_to_special =  Math.floor(Math.random() * 20)+11;
 					$(".back").eq(0).css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY(-"+$(window).height()+"px)", "-moz-transform": "translateY(-"+$(window).height()+"px)", "transform": "translateY(-"+$(window).height()+"px)"})
 					$(".row").remove()
 					$(".lost").removeClass("lost")
