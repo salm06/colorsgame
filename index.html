@@ -45,10 +45,13 @@
 				var toWin = gameLvl*5
 				var remaining = gameLvl*5
 				var newLevelRow = false
+				var lastCircle = ""
 
 				var special = ""
 				var rows_to_special =  Math.floor(Math.random() * 20)+10
 				var remaining_to_special = 0
+
+				var progressWidth = 0
 
 
 				function createRow(row) {
@@ -117,8 +120,10 @@
 						toWin = gameLvl*5
 						remaining = gameLvl*5
 
+					} else if(remaining <= 1) {
+						lastCircle = "last"
 					}
-					var row = $(document.createElement("div")).addClass("row toActivate level_"+gameLvl).attr("id",rows_count)
+					var row = $(document.createElement("div")).addClass(lastCircle + " row toActivate level_"+gameLvl).attr("id",rows_count)
 					rows_count++;
 					remaining_to_special++;
 
@@ -145,12 +150,13 @@
 						life = life-1
 						$(".lifeRow").find(".life").eq(0).remove()
 					} else {
+						clearInterval(gameLoop)
 						setTimeout(function(){
-							clearInterval(gameLoop)
 							makeFall()
+							$(".back").eq(0).css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+$(window).height()+"px)", "-moz-transform": "translateY("+$(window).height()+"px)", "transform": "translateY("+$(window).height()+"px)"})
 							$(".row").css({"background-color":"transparent"})
-							$(".field").html("<div class='finalScore'>"+total+"</div><div class='over'><span class='color1'>G</span><span class='color2'>A</span><span class='color3'>M</span><span class='color4'>E</span><span class='color5'> </span>O<span class='color1'>V</span><span class='color2'>E</span><span class='color3'>R</span></div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
-							$(".up").css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)", "-moz-transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)", "transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)"})
+							$(".panelIn").append("<div class='finalScore'>"+total+"</div><div class='over_button'><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
+							// $(".up").css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)", "-moz-transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)", "transform": "translateY("+($(window).height()/2 + 500 -$('.up').height()/2)+"px)"})
 							$(".totalPoints").html(total)
 							inPlay = false
 							points = 0;
@@ -162,8 +168,7 @@
 							remaining = gameLvl*5
 							speed = (targetHeight+20)/160;;
 							loopSpeed = targetHeight;
-							$(".up").addClass("lost")
-							$(".progress").width("0px")
+							$(".panelIn").addClass("lost")
 						},200)
 					}
 					
@@ -174,7 +179,6 @@
 					if(lvl%3 == 0 && colorsToUse < colorsList.length) {
 						colorsToUse++	
 					}
-					$(".progress").width("0px")
 					lvl++
 					if(life < 3 && lvl%2 == 0) {
 						life++
@@ -228,8 +232,11 @@
 				}
 
 				function replay(){
-					$(".field").html("")
-					$(".row").remove()
+					$(".back").eq(0).css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY(-"+$(window).height()+"px)", "-moz-transform": "translateY(-"+$(window).height()+"px)", "transform": "translateY(-"+$(window).height()+"px)"})
+					setTimeout(function(){
+						$(".row, .finalScore, .over_button").remove()
+					},1000)
+					$(".lost").removeClass("lost")
 					points = 0;
 					total = 0;
 					lvl = 1;
@@ -241,8 +248,6 @@
 					remaining = gameLvl*5
 					loopSpeed = targetHeight;
 					speed = (targetHeight+20)/160;
-					$(".lost").removeClass("lost")
-					$(".progress").width("0px")
 					restartLoop()
 				}
 
@@ -266,13 +271,11 @@
 					if($("#"+nextID).length) {
 						$("#"+nextID).removeClass("toActivate").addClass("active")
 					}
-
+					
 					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target") && !$("#"+activeID).hasClass("special")) {
-						$(".progress").width( $(".progress").width() + ($(window).width() / (lvl*3)) )
 						points += 1
 						total += 1
 					} else if($("#"+activeID).hasClass("special")) {
-						$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
 						points += 1
 						total += 1
 						rainbowEffect()
@@ -289,12 +292,12 @@
 						$("#"+nextID).removeClass("toActivate").addClass("active")
 					}
 
+
+					console.log(progressWidth)
 					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target") && !$("#"+activeID).hasClass("special")) {
-						$(".progress").width( $(".progress").width() + ($(window).width() / (toWin-1)) )
 						points += 1
 						total += 1
 					} else if($("#"+activeID).hasClass("special")) {
-						$(".progress").width( $(".progress").width() + ($(window).width() / (toWin-1)) )
 						points += 1
 						total += 1
 						rainbowEffect()
@@ -320,6 +323,7 @@
 						$(this).addClass("disabled").removeClass("active")
 					})
 					var elems = $(".disabled").nextAll(), count = elems.length;
+					total += count
 					$(".disabled").each(function(){
 						if (!--count) {
 							setTimeout(function(){
@@ -334,6 +338,11 @@
 				}
 
 				//Set dimensions of game table
+				$(".back").eq(0).css({"top": "-" + $(window).height() +"px"})
+				$(".panel").eq(0).css({
+					"top": ($(window).height()/2) - ($(".panel").height()/2),
+					"left": ($(window).width()/2) - ($(".panel").width()/2)
+				})
 				game.height($(window).height());
 				// $(".doArea").eq(0).css({"top":($(window).height()/2)-30})
 				// $(".up").eq(0).height($(window).height() - $(".doArea").eq(0).height() - 70)
@@ -433,16 +442,17 @@
 		<header>
 			<div class="progress"></div>
 			<div class="logo">
-				<span class="color1" >C</span>
-				<span class="color2" >o</span>
-				<span class="color3" >l</span>
-				<span class="color4" >o</span>
-				<span class="color5" >r</span>
-				<span class="color1" >s</span>
-				<span class="color1" >!</span>
-			</div>
+				Colors!
+				</div>
 			<div class="totalPoints">0</div>
 		</header>
+		<div class="back">
+			<div class="panel">
+				<div class=" panelIn cell">
+					<div class="logo">Score</div>
+				</div>
+			</div>
+		</div>
 		<main id="gameTable">
 			<div class="lifeRow"></div>
 			<div class="table up"><div class="field cell"></div></div>
