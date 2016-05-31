@@ -15,6 +15,7 @@
 	<!-- <script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>-->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link href='https://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 	<meta charset="utf-8">
 
 	<script type="text/javascript">
@@ -69,6 +70,7 @@
 						},200)
 						newLevelRow = false
 					} else {
+						console.log(rows_to_special)
 						if(remaining_to_special ==  rows_to_special) {
 							remaining_to_special = 0;
 							rows_to_special =  Math.floor(Math.random() * 30) + 10
@@ -190,6 +192,7 @@
 					if(life < 3 && lvl%2 == 0) {
 						life++
 						$(".lifeRow").append("<div class='life'></div>")
+						$(".alert_row").eq(0).find(".cell").append("<div>+1 <div class='alignLife'><span class='lifeEarned'></span></div></div>")
 					}
 					points = 0;
 					// if(loopSpeed < 520 && loopSpeed > 320) {
@@ -432,9 +435,8 @@
 							restartLoop()
 						}
 
-						if(rows_to_special%((gameLvl*5)-1) == 0) {
+						if(rows_to_special%(gameLvl*5) == 0) {
 							rows_to_special =  Math.floor(Math.random() * 20)+11
-							console.log(rows_to_special)
 						}
 					}
 				}, 100)
@@ -448,8 +450,13 @@
 		<header>
 			<div class="progress"></div>
 			<div class="logo">
-				Colors!
-				</div>
+				<span class="color1">C</span>
+				<span class="color2">o</span>
+				<span class="color3">l</span>
+				<span class="color4">o</span>
+				<span class="color5">r</span>
+				<span class="color1">s!</span>
+			</div>
 			<div class="totalPoints">0</div>
 		</header>
 		<div class="back">
