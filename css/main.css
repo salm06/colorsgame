@@ -88,6 +88,25 @@ wrapper {
     height: 100%;
 }
 
+.color1 {
+	color: #ffb3ba;
+}
+
+.color2 {
+	color: #ffdfba;
+}
+
+.color3 {
+	color: #FFF1BA;
+}
+
+.color4 {
+	color: #DBEBC2;
+}
+
+.color5 {
+	color: #bae1ff;
+}
 
 
 
@@ -123,15 +142,18 @@ header div {
 
 header .logo {
 	color: #FFF;
+	font-weight: 300;
+    letter-spacing: 2px;
 }
 
 header .totalPoints {
 	text-align: right;
 	color: #FFF;
+	font-weight: 300;
+    letter-spacing: 2px;
 }
 
 .back {
-	transition: transform 1s linear;
 	z-index: 6;
 	width: 100%;
 	height: 100%;
@@ -160,6 +182,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7a7a6', end
 	position: absolute;
 	top: 20px;
 	width: 100%;
+}
+.panelIn .score {
+	width: 100%;
+}
+
+.playAgain {
+	display: none;
+}
+
+.start {
+	display: block;
 }
 
 .progress {
@@ -252,24 +285,24 @@ main {
     top: -500px;
 }
 
-.panelIn.lost, .down.lost .done {
+.panelIn, .down .done {
 	color: #ACC3DB;
 	background-color: #white;
 	font-size: 30px;
 }
 
-.panelIn.lost .over {
+.panelIn .over {
 	margin-bottom: 20px;
 }
 
-.panelIn.lost .finalScore {
+.panelIn .finalScore, .panelIn .best {
 	font-size: 100px;
 	color: #CECECE;
 	padding-bottom: 20px;
 }
 
 
-.panel.lost {
+.panel {
 	color: #F7A7A6;
 }
 
