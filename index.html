@@ -30,7 +30,7 @@
 				var colorsList =  [{"center":"#F7A7A6","side":"#F48B94"},{"center":"#DBEBC2","side":"#ACDBC9"}, {"center":"#ACC3DB","side":"#ACCADB"}, {"center":"#EAC2E7","side":"#F989F0"}, {"center":"#FFD1B6","side":"#F7A26F"}]
 				var opposite = 0;
 				var rows_count = 0;
-				var inPlay = true;
+				var inPlay = false;
 				var distance = 0;
 				var total = 0;
 				var targetHeight = $(window).height() + 100
@@ -48,10 +48,11 @@
 				var lastCircle = ""
 
 				var special = ""
-				var rows_to_special =  Math.floor(Math.random() * 20)+10
+				var rows_to_special =  Math.floor(Math.random() * 20)+11
 				var remaining_to_special = 0
 
 				var progressWidth = 0
+				var bestScore = localStorage.getItem("best") ? localStorage.getItem("best") : 0;
 
 
 				function createRow(row) {
@@ -150,10 +151,14 @@
 						life = life-1
 						$(".lifeRow").find(".life").eq(0).remove()
 					} else {
+						inPlay = false
 						clearInterval(gameLoop)
 						setTimeout(function(){
+							if( total > bestScore ) {
+								localStorage.setItem("best", total);
+							}
 							makeFall()
-							$(".back").eq(0).css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY("+$(window).height()+"px)", "-moz-transform": "translateY("+$(window).height()+"px)", "transform": "translateY("+$(window).height()+"px)"})
+							$(".back").eq(0).css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY(0px)", "-moz-transform": "translateY(0px)", "transform": "translateY(0px)"})
 							$(".row").css({"background-color":"transparent"})
 							$(".alert_row").html("")
 							$(".finalScore").html(total)
@@ -169,6 +174,8 @@
 							speed = (targetHeight+20)/160;;
 							loopSpeed = targetHeight;
 							$(".panelIn").addClass("lost")
+							$(".playAgain").show()
+							$(".start").hide()
 						},200)
 					}
 					
@@ -182,7 +189,7 @@
 					lvl++
 					if(life < 3 && lvl%2 == 0) {
 						life++
-						$(".lifeRow").append("<div class='life'></div>")
+						$(".totalPoints").prepend("<div class='life'></div>")
 					}
 					points = 0;
 					// if(loopSpeed < 520 && loopSpeed > 320) {
@@ -336,7 +343,7 @@
 				}
 
 				//Set dimensions of game table
-				$(".back").eq(0).css({"top": "-" + $(window).height() +"px"})
+				$(".best").html(bestScore)
 				$(".panel").eq(0).css({
 					"top": ($(window).height()/2) - ($(".panel").height()/2),
 					"left": ($(window).width()/2) - ($(".panel").width()/2)
@@ -425,8 +432,9 @@
 							restartLoop()
 						}
 
-						if(rows_to_special%gameLvl*5 == 0) {
-							rows_to_special =  Math.floor(Math.random() * 20)+10
+						if(rows_to_special%((gameLvl*5)-1) == 0) {
+							rows_to_special =  Math.floor(Math.random() * 20)+11
+							console.log(rows_to_special)
 						}
 					}
 				}, 100)
@@ -442,21 +450,45 @@
 			<div class="logo">
 				Colors!
 				</div>
-			<div class="totalPoints">0</div>
+			<div class="lifeRow"></div><div class="totalPoints">0</div>
 		</header>
 		<div class="back">
 			<div class="panel">
 				<div class=" panelIn cell">
-					<div class="logo">Score</div>
-					<div class='finalScore'></div>
-					<div class='over_button'>
-						<a href='javascript:void(0)' id='replay'>Play Again</a>
+					<div class="playAgain">
+						<div class="logo">
+								<span class="color1">C</span>
+								<span class="color2">o</span>
+								<span class="color3">l</span>
+								<span class="color4">o</span>
+								<span class="color5">r</span>
+								<span class="color1">s!</span>
+						</div>
+						<div class="score">Score</div>
+						<div class='finalScore'></div>
+						<div class='over_button'>
+							<a href='javascript:void(0)' id='replay'>Play Again</a>
+						</div>
+					</div>
+					<div class="start">
+						<div class="logo">
+							<span class="color1">C</span>
+							<span class="color2">o</span>
+							<span class="color3">l</span>
+							<span class="color4">o</span>
+							<span class="color5">r</span>
+							<span class="color1">s!</span>
+						</div>
+						<div class="score">Your Best</div>
+						<div class="best"></div>
+						<div class='over_button'>
+							<a href='javascript:void(0)' id='replay'>Play</a>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<main id="gameTable">
-			<div class="lifeRow"></div>
 			<div class="table up"><div class="field cell"></div></div>
 			<!-- <div class="doArea"></div> -->
 		</main>
