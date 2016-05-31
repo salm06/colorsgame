@@ -42,8 +42,8 @@
 				var colorsToUse = 2
 
 				var gameLvl = 1
-				var toWin = 11
-				var remaining = 11
+				var toWin = gameLvl*5
+				var remaining = gameLvl*5
 				var newLevelRow = false
 
 				var special = ""
@@ -65,7 +65,6 @@
 						},200)
 						newLevelRow = false
 					} else {
-						console.log(remaining_to_special, rows_to_special)
 						if(remaining_to_special ==  rows_to_special) {
 							remaining_to_special = 0;
 							rows_to_special =  Math.floor(Math.random() * 30) + 10
@@ -115,8 +114,8 @@
 					if( remaining <= 0) {
 						newLevelRow = true
 						gameLvl++
-						toWin = 11
-						remaining = 11
+						toWin = gameLvl*5
+						remaining = gameLvl*5
 
 					}
 					var row = $(document.createElement("div")).addClass("row toActivate level_"+gameLvl).attr("id",rows_count)
@@ -144,7 +143,7 @@
 				function lost() {
 					if(life > 0) {
 						life = life-1
-						$(".lifeRow").eq(0).remove()
+						$(".lifeRow").find(".life").eq(0).remove()
 					} else {
 						setTimeout(function(){
 							clearInterval(gameLoop)
@@ -159,8 +158,8 @@
 							colorsToUse = 2
 							newLevelRow = false
 							gameLvl = 1
-							toWin = 11
-							remaining = 11
+							toWin = gameLvl*5
+							remaining = gameLvl*5
 							speed = (targetHeight+20)/160;;
 							loopSpeed = targetHeight;
 							$(".up").addClass("lost")
@@ -182,7 +181,6 @@
 						$(".lifeRow").append("<div class='life'></div>")
 					}
 					points = 0;
-					console.log("Before",loopSpeed, speed)
 					// if(loopSpeed < 520 && loopSpeed > 320) {
 					// 	var k = 0.6/lvl
 					// 	loopSpeed = (speed-k) * targetHeight / resetSpeed
@@ -196,7 +194,6 @@
 						loopSpeed = (speed-k) * targetHeight / resetSpeed
 						speed = speed - k
 					}
-					console.log("After",loopSpeed, speed)
 					restartLoop()
 				}
 
@@ -240,8 +237,8 @@
 					colorsToUse = 2
 					newLevelRow = false
 					gameLvl = 1
-					toWin = 11
-					remaining = 11
+					toWin = gameLvl*5
+					remaining = gameLvl*5
 					loopSpeed = targetHeight;
 					speed = (targetHeight+20)/160;
 					$(".lost").removeClass("lost")
@@ -419,10 +416,9 @@
 							loopSpeed = 320;
 							speed = (loopSpeed * resetSpeed / targetHeight);
 							restartLoop()
-							console.log(loopSpeed,speed)
 						}
 
-						if(rows_to_special%11 == 0) {
+						if(rows_to_special%gameLvl*5 == 0) {
 							rows_to_special =  Math.floor(Math.random() * 20)+10
 						}
 					}
