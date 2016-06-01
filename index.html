@@ -47,6 +47,7 @@
 				var remaining = gameLvl*5
 				var newLevelRow = false
 				var lastCircle = ""
+				var earnLife = ""
 
 				var special = ""
 				var rows_to_special =  Math.floor(Math.random() * 20)+11
@@ -117,15 +118,22 @@
 				function play(){
 					remaining = remaining - 1;
 					if( remaining <= 0) {
+						lastCircle = ""
+						earnLife = ""
 						newLevelRow = true
 						gameLvl++
 						toWin = gameLvl*5
 						remaining = gameLvl*5
 
-					} else if(remaining <= 1) {
+					} else if(remaining <= 1 && remaining >= 0) {
 						lastCircle = "last"
-					}
-					var row = $(document.createElement("div")).addClass(lastCircle + " row toActivate level_"+gameLvl).attr("id",rows_count)
+						if(life < 3 && lvl%2 == 1) {
+							earnLife = "new_life"
+						}
+
+					} 
+					var row = $(document.createElement("div")).addClass(lastCircle + " " + earnLife + " row toActivate level_"+gameLvl).attr("id",rows_count)
+					
 					rows_count++;
 					remaining_to_special++;
 
@@ -189,8 +197,6 @@
 					}
 					lvl++
 					if(life < 3 && lvl%2 == 0) {
-						life++
-						$(".lifeRow").append("<div class='life'></div>")
 						$(".alert_row").eq(0).find(".cell").append("<div class='separator'>+1 <div class='alignLife'><span class='lifeEarned'></span></div></div>")
 					}
 					points = 0;
@@ -287,9 +293,17 @@
 					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target") && !$("#"+activeID).hasClass("special")) {
 						points += 1
 						total += 1
+						if($("#"+activeID).hasClass("new_life")){
+							life++
+							$(".lifeRow").append("<div class='life'></div>")
+						}
 					} else if($("#"+activeID).hasClass("special")) {
 						points += 1
 						total += 1
+						if($("#"+activeID).hasClass("new_life")){
+							life++
+							$(".lifeRow").append("<div class='life'></div>")
+						}
 						rainbowEffect()
 					} else {
 						lost()
@@ -308,9 +322,17 @@
 					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target") && !$("#"+activeID).hasClass("special")) {
 						points += 1
 						total += 1
+						if($("#"+activeID).hasClass("new_life")){
+							life++
+							$(".lifeRow").append("<div class='life'></div>")
+						}
 					} else if($("#"+activeID).hasClass("special")) {
 						points += 1
 						total += 1
+						if($("#"+activeID).hasClass("new_life")){
+							life++
+							$(".lifeRow").append("<div class='life'></div>")
+						}
 						rainbowEffect()
 					} else {
 						lost()
@@ -436,6 +458,11 @@
 							$(".row:not(.disabled)").eq(0).removeClass("toActivate").addClass("active")
 						}
 
+						if($(".new_life").hasClass(".disabled") && $(".new_life").offset().top > $(window).height() ) {
+							life++
+							(".lifeRow").append("<div class='life'></div>")
+						}
+
 						if(loopSpeed < 320) {
 							inPlay = false;
 							loopSpeed = 320;
@@ -457,28 +484,14 @@
 	<wrapper>
 		<header>
 			<div class="progress"></div>
-			<div class="logo">
-				<span class="color1">C</span>
-				<span class="color2">o</span>
-				<span class="color3">l</span>
-				<span class="color4">o</span>
-				<span class="color5">r</span>
-				<span class="color1">s!</span>
-			</div>
+				<div class="logo"></div>
 			<div class="totalPoints">0</div>
 		</header>
 		<div class="back">
 			<div class="panel">
 				<div class=" panelIn cell">
 					<div class="playAgain">
-						<div class="logo">
-								<span class="color1">C</span>
-								<span class="color2">o</span>
-								<span class="color3">l</span>
-								<span class="color4">o</span>
-								<span class="color5">r</span>
-								<span class="color1">s!</span>
-						</div>
+							<div class="logo"></div>
 						<div class="score">Score</div>
 						<div class='finalScore'></div>
 						<div class='over_button'>
@@ -486,14 +499,7 @@
 						</div>
 					</div>
 					<div class="start">
-						<div class="logo">
-							<span class="color1">C</span>
-							<span class="color2">o</span>
-							<span class="color3">l</span>
-							<span class="color4">o</span>
-							<span class="color5">r</span>
-							<span class="color1">s!</span>
-						</div>
+							<div class="logo"></div>
 						<div class="score">Your Best</div>
 						<div class="best"></div>
 						<div class='over_button'>
