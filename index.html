@@ -28,7 +28,7 @@
 				var lvl = 1;
 				var points = 0;
 				var toSelect = 0;
-				var colorsList =  [{"center":"#F7A7A6","side":"#F48B94"},{"center":"#DBEBC2","side":"#ACDBC9"}, {"center":"#ACC3DB","side":"#ACCADB"}, {"center":"#FFD1FC","side":"#FFD1FC"}, {"center":"#FFD1B6","side":"#F7A26F"}]
+				var colorsList =  [{"center":"#F7A7A6","side":"#FBF4F4"},{"center":"#DBEBC2","side":"#F1F9E6"}, {"center":"#ACC3DB","side":"#F4F7F9"}, {"center":"#FFD1B6","side":"#F9EFE9"},{"center":"#FFD4FC","side":"#FDEEFC"}]
 				var opposite = 0;
 				var rows_count = 0;
 				var inPlay = false;
@@ -101,14 +101,14 @@
 
 
 						var curr1 = $(document.createElement("div")).addClass("circleCont")
-						var currIn1 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color1].center}).attr("data-target",color1)
+						var currIn1 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color1].center, "background-color":colorsList[color1].side}).attr("data-target",color1)
 
 						
 						var curr2 = $(document.createElement("div")).addClass("circleCont center")
 						var currIn2 = $(document.createElement("div")).addClass("circle "+special).css({"border-color":colorsList[color2].center}).attr("data-target",color2).css({"background-color":colorsList[color2].center}).attr("data-target",color2)
 						
 						var curr3 = $(document.createElement("div")).addClass("circleCont")
-						var currIn3 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color3].center}).attr("data-target",color3)
+						var currIn3 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color3].center, "background-color":colorsList[color3].side}).attr("data-target",color3)
 						
 						
 						curr1.append(currIn1)
@@ -168,6 +168,8 @@
 					} else {
 						inPlay = false
 						clearInterval(gameLoop)
+						$(".finalScore").html(total)
+						$(".totalPoints").html(total)
 						setTimeout(function(){
 							if( total > bestScore ) {
 								localStorage.setItem("best", total);
@@ -176,8 +178,6 @@
 							$(".back").eq(0).css({"transition": "transform "+1.5+"s linear" , "-webkit-transform": "translateY(0px)", "-moz-transform": "translateY(0px)", "transform": "translateY(0px)"})
 							$(".row").css({"background-color":"transparent"})
 							$(".alert_row").html("")
-							$(".finalScore").html(total)
-							$(".totalPoints").html(total)
 							inPlay = false
 							points = 0;
 							lvl = 1;
@@ -351,6 +351,7 @@
 					clearInterval(gameLoop)
 
 					$(".circleCont").each(function(){
+						$(this).parent(".row").addClass("disabled")
 						var fallSpeed =  Math.floor(Math.random() * 1.5) + 1
 						var floorHeight = $(window).height()
 						$(this).css({"transition": "transform "+fallSpeed+"s ease-in" , "-webkit-transform": "translateY("+floorHeight+"px)", "-moz-transform": "translateY("+floorHeight+"px)", "transform": "translateY("+floorHeight+"px)"})
