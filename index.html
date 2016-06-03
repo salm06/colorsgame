@@ -28,20 +28,41 @@
 				var lvl = 1;
 				var points = 0;
 				var toSelect = 0;
-				var colorsList =  [{"center":"#F7A7A6","side":"#FBF4F4"},{"center":"#DBEBC2","side":"#F1F9E6"}, {"center":"#ACC3DB","side":"#F4F7F9"}, {"center":"#FFD1B6","side":"#F9EFE9"},{"center":"#FFD4FC","side":"#FDEEFC"}]
+				var colorsList =  [{"center":"#F7A7A6","side":"#FBF4F4"},{"center":"#DBEBC2","side":"#F8FBF5"}, {"center":"#ACC3DB","side":"#F4F7F9"}, {"center":"#FFD1B6","side":"#F9EFE9"},{"center":"#FFD4FC","side":"#FDEEFC"}]
 				var opposite = 0;
 				var rows_count = 0;
 				var inPlay = false;
 				var distance = 0;
 				var total = 0;
-				var targetHeight = $(window).height() + 100
-				var resetSpeed = (targetHeight+20)/160;
-				// Example speed and space ------
-				var v = 156;
+
+
+				// Example speed and space
+				var v = 4.91;
 				var s = 767;
-				// ------------------------------------
-				var loopSpeed = targetHeight;
-				var speed = targetHeight / v
+				var h = 100;
+				var pad = 15;
+				var top = 20;
+				var targetHeight = $(window).height() + 100
+				var time2 = v * targetHeight / s ;
+				var difference =  time2 - v;
+				var resetTime = v + difference
+				var loopSpeed = s*resetTime / v
+				var time = resetTime
+
+				var newH = (h*targetHeight / s) ;
+				var newPad = (pad * targetHeight / s)
+				var newTop = (top * targetHeight / s)
+
+				console.log("newH", newH)
+				console.log("newPad", newPad)
+				console.log("targetHeight", targetHeight)
+				console.log("resetTime", resetTime)
+				console.log("loopSpeed", loopSpeed)
+				console.log("time", time)
+
+
+
+
 				var winFlag = false
 				var life = 0
 				var colorsToUse = 2
@@ -54,14 +75,13 @@
 				var earnLife = ""
 
 				var special = ""
-				var rows_to_special =  Math.floor(Math.random() * 20)+11
+				var rows_to_special =  Math.floor(Math.random() * 30)+30
 				var remaining_to_special = 0
 
 				var progressWidth = 0
 				var bestScore = localStorage.getItem("best") ? localStorage.getItem("best") : 0;
 
-				console.log("Speed: " + speed)
-				console.log("loopSpeed: " + loopSpeed)
+				console.log("rows_to_special: " + rows_to_special)
 
 				function createRow(row) {
 					if(newLevelRow){
@@ -72,14 +92,15 @@
 						game.append(row)
 						//Binding gestures
 						setTimeout(function(){
-							// row.addClass("falling").css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+							// row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
 							win();
 						},200)
 						newLevelRow = false
 					} else {
 						if(remaining_to_special ==  rows_to_special) {
 							remaining_to_special = 0;
-							rows_to_special =  Math.floor(Math.random() * 30) + 10
+							rows_to_special = Math.floor(Math.random() * 30)+30
+								console.log("rows_to_special reset: " + rows_to_special)
 							special = "special"
 						} else {
 							special = ""
@@ -138,7 +159,7 @@
 						}
 
 					} 
-					var row = $(document.createElement("div")).addClass(lastCircle + " " + earnLife + " row toActivate level_"+gameLvl).attr("id",rows_count)
+					var row = $(document.createElement("div")).addClass(lastCircle + " " + earnLife + " row toActivate level_"+gameLvl).attr("id",rows_count).css({"height": newH, "padding-top":newPad, "top":"-"+newTop+"px"})
 					
 					rows_count++;
 					remaining_to_special++;
@@ -155,7 +176,7 @@
 
 					//Binding gestures
 					setTimeout(function(){
-						row.addClass("falling").css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+						row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
 					},200)
 
 
@@ -186,7 +207,7 @@
 							gameLvl = 1
 							toWin = gameLvl*5
 							remaining = gameLvl*5
-							speed = (targetHeight+20)/160;;
+							time = (targetHeight+20)/160;;
 							loopSpeed = targetHeight;
 							$(".panelIn").addClass("lost")
 							$(".playAgain").show()
@@ -208,20 +229,20 @@
 					points = 0;
 					// if(loopSpeed < 520 && loopSpeed > 320) {
 					// 	var k = 0.6/lvl
-					// 	loopSpeed = (speed-k) * targetHeight / resetSpeed
-					// 	speed = speed - k
+					// 	loopSpeed = (time-k) * targetHeight / resetTime
+					// 	time = time - k
 					// } else 
 					if(loopSpeed < 340) {
 						loopSpeed = 320;
-						speed = (loopSpeed * resetSpeed / targetHeight);
+						time = (loopSpeed * resetTime / targetHeight);
 					} else {
 						if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 							var k = 1/lvl*1.4
 						} else {
 							var k = 1/lvl*2.4
 						}
-						loopSpeed = (speed-k) * targetHeight / resetSpeed
-						speed = speed - k
+						loopSpeed = (time-k) * targetHeight / resetTime
+						time = time - k
 					}
 					restartLoop()
 				}
@@ -232,7 +253,7 @@
 						var elems = $(".row").nextAll(), count = elems.length;
 						$(".row").each(function(){
 							var nowHeight = targetHeight + $(this).offset().top
-							$(this).css({"transition": "transform "+speed+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+							$(this).css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
 							if (!--count) {
 								inPlay = true
 								gameLoop = setInterval(function(){
@@ -271,7 +292,7 @@
 					toWin = gameLvl*5
 					remaining = gameLvl*5
 					loopSpeed = targetHeight;
-					speed = (targetHeight+20)/160;
+					time = (targetHeight+20)/160;
 					restartLoop()
 				}
 
@@ -475,12 +496,13 @@
 						if(loopSpeed < 320) {
 							inPlay = false;
 							loopSpeed = 320;
-							speed = (loopSpeed * resetSpeed / targetHeight);
+							time = (loopSpeed * resetTime / targetHeight);
 							restartLoop()
 						}
 
-						if(rows_to_special%(gameLvl*5) == 0) {
-							rows_to_special =  Math.floor(Math.random() * 20)+11
+						if(rows_to_special%5 == 0) {
+							rows_to_special =  Math.floor(Math.random() * 30)+30
+								console.log("rows_to_special edited: " + rows_to_special)
 						}
 					}
 				}, 100)
