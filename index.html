@@ -14,6 +14,7 @@
 	<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
 	<!-- <script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>-->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/animate.css">
 	<link href='https://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 	<meta charset="utf-8">
@@ -386,12 +387,14 @@
 						$(this).addClass("disabled").removeClass("active")
 					})
 					var elems = $(".disabled").nextAll(), count = elems.length;
-					total += count
+					
 					$(".disabled").each(function(){
+						total++
 						if (!--count) {
 							setTimeout(function(){
 								makeFall()
 								restartLoop();
+								$(".totalPoints").html(total).addClass("animated pulse")
 							},300)
 						}
 					})
