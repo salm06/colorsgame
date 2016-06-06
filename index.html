@@ -543,7 +543,7 @@
 							$(".row:not(.disabled)").eq(0).removeClass("toActivate").addClass("active")
 						}
 
-						if($(".new_life").hasClass(".disabled") && $(".new_life").offset().top > $(window).height() ) {
+						if($(".new_life").hasClass(".disabled") && $(".new_life").offset().top > $(window).height() && life < 3) {
 							life++
 							(".lifeRow").append("<div class='life'></div>")
 						}
@@ -622,7 +622,7 @@
 
 			<div class="explanation hide">
 				<div class="title color1">Lifes</div>
-				<div class="text">You eran 1 life each 2 level. You can lose a life if you move the dot to the wrong position or if you're not fast and a row that you didn't swiped go over the bottom of the screen. You can have a maximum of 3 lifes.</div>
+				<div class="text">You earn 1 life each 2 level. You can lose a life if you move the dot to the wrong position or if you're not fast and a row that you didn't swiped go over the bottom of the screen. You can have a maximum of 3 lifes.</div>
 					<div class="example">
 						<div class="lifeRow">
 							<div class="life"></div>
