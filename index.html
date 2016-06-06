@@ -38,9 +38,9 @@
 
 
 				// Example speed and space
-				var v = 4.91;
+				var v = 4.51;
 				var s = 767;
-				var h = 100;
+				var h = 121;
 				var pad = 10;
 				var top = 20;
 				var targetHeight = $(window).height() + 100
@@ -395,11 +395,14 @@
 						var left = $(this).find(".circleCont").eq(0).find(".circle").attr("data-target")
 						var center = $(this).find(".circleCont").eq(1).find(".circle").attr("data-target")
 						var right = $(this).find(".circleCont").eq(2).find(".circle").attr("data-target")
-
 						if(left == center) {
-							$(document).trigger("swipeleft")
+							setTimeout(function(){
+								$(document).trigger("swipeleft")
+							},200*index)
 						} else if( right == center) {
-							$(document).trigger("swiperight")
+							setTimeout(function(){
+								$(document).trigger("swiperight")
+							},200*index)
 						}
 
 						total++
