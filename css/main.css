@@ -89,7 +89,7 @@
 	}
 
 	.color1 {
-		color: #ffb3ba;
+		color: #F7A7A6;
 	}
 
 	.color2 {
@@ -105,7 +105,7 @@
 	}
 
 	.color5 {
-		color: #bae1ff;
+		color: #ACC3DB;
 	}
 
 
@@ -170,6 +170,13 @@
 		/*letter-spacing: 2px;*/
 	}
 
+  .rainbow {
+    line-height: 2em;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2em;
+  }
+
 	.back {
 		z-index: 6;
 		width: 100%;
@@ -197,6 +204,7 @@
 
 
 	.panelIn .score {
+      margin-top: 90px;
 		width: 100%;
 	}
 
@@ -217,8 +225,6 @@
 	}
 
 	.over_button {
-		position: absolute;
-		bottom: 40px;
 		width: 100%;
 	}
 
@@ -300,7 +306,6 @@
 
 	.panelIn, .down .done {
 		color: #ACC3DB;
-		background-color: #white;
 		font-size: 30px;
 	}
 
@@ -311,7 +316,7 @@
 	.panelIn .finalScore, .panelIn .best {
 		font-size: 100px;
 		color: #CECECE;
-		padding-bottom: 20px;
+		padding-bottom: 35px;
 	}
 
 
@@ -364,7 +369,6 @@
   }
 
   .row > .circleCont {
-  	padding-top: 10px;
   	display: inline-block;
   	width: 33.3333333%;
   	height: 80px;
@@ -427,7 +431,10 @@
   }
 
   #replay {
-  	position: relative;
+   margin: auto;
+    margin-bottom: 10px;
+      width: 210px;
+  	display: block;
   	padding: 10px 40px;
   	border-radius: 10px;
   	font-size: 25px;
@@ -438,6 +445,22 @@
   	/* Animation */
   	transition: all 0.1s;
   	-webkit-transition: all 0.1s;
+  }
+
+  #howToPlay {
+    margin: auto;
+    width: 210px;
+    display: block;
+    padding: 10px 40px;
+    border-radius: 10px;
+    font-size: 25px;
+    color: #FFF;
+    text-decoration: none;
+    background-color: #B9D3E8;
+    border-bottom: 5px solid #ACC3DB;
+    /* Animation */
+    transition: all 0.1s;
+    -webkit-transition: all 0.1s;
   }
 
   .lifeRow {
@@ -554,4 +577,93 @@
   	color: #F7A7A6;
   	margin-top: 10px;
   	border-top: 1px dotted #F7A7A6;
+  }
+
+  .example_row {
+    display: block;
+    width: 100%;
+    height: 100px;
+    padding-top: 10px;
+    top: 20px;
+    left: 0px;
+    z-index: 2;
+    transform-origin: top;
+     margin-top: 20px;
+  }
+
+  .example_row > div {
+    display: inline-block;
+    width: 32.333333%;
+  }
+
+  .example_row .center {
+        margin-bottom: 6px;
+  }
+
+  #infos {
+    min-height: 400px;
+    box-sizing: border-box;
+    padding: 20px;
+    padding-bottom: 250px;
+    overflow-y: scroll;
+    margin: auto;
+    width: 100%;
+    max-width: 480px;
+    display: none;
+    position: relative;
+    top: 70px;
+    height: 100%;
+  }
+
+  #infos .explanation {
+    padding-bottom: 20px;
+  }
+
+  #infos .title {
+    font-weight: bold;
+    font-size: 1.3em;
+  }
+
+  #infos .text {
+    line-height: 1.4em;
+    padding-top: 10px;
+    color: #696969;
+  }
+
+  .example .lifeRow {
+    width: 100%;
+    height: 30px;
+    top: 20px;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  #infos .next_button {
+    float: right;
+    margin-top: 40px;
+    padding: 10px 40px;
+    border-radius: 10px;
+    font-size: 25px;
+    color: #FFF;
+    text-decoration: none;  
+    background-color: #FFD1B6;
+    border-bottom: 5px solid #FFBC94;
+    /* Animation */
+    transition: all 0.1s;
+    -webkit-transition: all 0.1s;
+  }
+
+    #infos .prev_button {
+    float: left;
+    margin-top: 40px;
+    padding: 10px 40px;
+    border-radius: 10px;
+    font-size: 25px;
+    color: #FFF;
+    text-decoration: none;  
+    background-color: #FFD1B6;
+    border-bottom: 5px solid #FFBC94;
+    /* Animation */
+    transition: all 0.1s;
+    -webkit-transition: all 0.1s;
   }
