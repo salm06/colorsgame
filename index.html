@@ -14,7 +14,9 @@
 	<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
 	<!-- <script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>-->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/animate.css">
 	<link href='https://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 	<meta charset="utf-8">
 
 	<script type="text/javascript">
@@ -24,288 +26,615 @@
 				var cols = 3; //Should be odd
 				var rows = Math.floor($(window).height() / 80);
 				var game = $("#gameTable").eq(0);
-				var speed = 7;
 				var lvl = 1;
 				var points = 0;
 				var toSelect = 0;
-				var colorsArrayCenter = ["#DBEBC2","#F7A7A6"]
-				var colorsArraySide = ["#ACDBC9","#F48B94"]
+				var colorsList =  [{"center":"#F7A7A6","side":"#FBF4F4"},{"center":"#DBEBC2","side":"#F8FBF5"}, {"center":"#ACC3DB","side":"#F4F7F9"}, {"center":"#FFB88F","side":"#F9EFE9"},{"center":"#D8ACDB","side":"#FDEEFC"}]
 				var opposite = 0;
 				var rows_count = 0;
-				var inPlay = true;
-				var loopSpeed = 700;
+				var inPlay = false;
 				var distance = 0;
 				var total = 0;
 
+
+				// Example speed and space
+				var v = 4.91;
+				var s = 767;
+				var h = 100;
+				var pad = 10;
+				var top = 20;
+				var targetHeight = $(window).height() + 100
+				var time2 = v * targetHeight / s ;
+				var difference =  time2 - v;
+				var resetTime = v + difference
+				var loopSpeed = s*resetTime / v
+				var time = resetTime
+
+				var newH = (h*targetHeight / s) ;
+				var newPad = (newH/2)-30
+				var newTop = (top * targetHeight / s)
+
+
+
+
+
+				var winFlag = false
+				var life = 0
+				var colorsToUse = 2
+
+				var gameLvl = 1
+				var toWin = gameLvl*5
+				var remaining = gameLvl*5
+				var newLevelRow = false
+				var lastCircle = ""
+				var earnLife = ""
+
+				var special = ""
+				var rows_to_special =  Math.floor(Math.random() * 30)+30
+				var remaining_to_special = 0
+				console.log("On Ready: " +rows_to_special)
+				var progressWidth = 0
+				var bestScore = localStorage.getItem("best") ? localStorage.getItem("best") : 0;
+
+
+				function createRow(row) {
+					if(newLevelRow){
+						rows_count = rows_count - 1;
+						row.removeClass("toActivate").addClass("alert_row table disabled").addClass("falling").removeAttr("id")
+						var levelRowIn = $(document.createElement("div")).addClass("cell").html("Level" + gameLvl)
+						row.append(levelRowIn)
+						game.append(row)
+						//Binding gestures
+						setTimeout(function(){
+							// row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+							win();
+						},200)
+						newLevelRow = false
+					} else {
+						if(remaining_to_special ==  rows_to_special) {
+							remaining_to_special = 0;
+							rows_to_special = Math.floor(Math.random() * 30)+30
+							console.log("After Set: "+rows_to_special)
+							special = "special"
+						} else {
+							special = ""
+						}
+
+						row.addClass(special).css({"height": newH, "padding-top":newPad, "top":"-"+newTop+"px"})
+
+						var color1 = Math.floor(Math.random() * colorsToUse)
+						var color3 = Math.floor(Math.random() * colorsToUse)
+						if(color3 == color1) {
+							// Shitty solution, but array.splice(color1,0) didn't work
+							while(color3 == color1){
+								color3 = Math.floor(Math.random() * colorsToUse)
+							}
+						} 
+						var colorsSelected = [color1, color3]
+						var color2index = Math.floor(Math.random() * colorsSelected.length)
+						var color2 = colorsSelected[color2index]
+
+
+						var curr1 = $(document.createElement("div")).addClass("circleCont")
+						var currIn1 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color1].center, "background-color":colorsList[color1].side}).attr("data-target",color1)
+
+						
+						var curr2 = $(document.createElement("div")).addClass("circleCont center")
+						var currIn2 = $(document.createElement("div")).addClass("circle "+special).css({"border-color":colorsList[color2].center}).attr("data-target",color2).css({"background-color":colorsList[color2].center}).attr("data-target",color2)
+						
+						var curr3 = $(document.createElement("div")).addClass("circleCont")
+						var currIn3 = $(document.createElement("div")).addClass("circle").css({"border-color":colorsList[color3].center, "background-color":colorsList[color3].side}).attr("data-target",color3)
+						
+						
+						curr1.append(currIn1)
+						curr2.append(currIn2)
+						curr3.append(currIn3)
+						row.append(curr1, curr2, curr3)
+					}
+					
+
+					game.append(row)
+				}
+
 				function play(){
-					var row = $(document.createElement("div")).addClass("row").css({"transition": "transform "+speed+"s linear"}).attr("id",rows_count)
+					remaining = remaining - 1;
+					if( remaining <= 0) {
+						lastCircle = ""
+						earnLife = ""
+						newLevelRow = true
+						gameLvl++
+						toWin = gameLvl*5
+						remaining = gameLvl*5
+
+					} else if(remaining <= 1 && remaining >= 0) {
+						lastCircle = "last"
+						if(life < 3 && lvl%2 == 1) {
+							earnLife = "new_life"
+						}
+
+					} 
+					var row = $(document.createElement("div")).addClass(lastCircle + " " + earnLife + " row toActivate level_"+gameLvl).attr("id",rows_count)
+					
 					rows_count++;
+					remaining_to_special++;
+
+
 					if(rows_count%2 == 0) {
 						row.addClass("grey")
 					}
-					$(".totalPoints").html(total)
-					if( $(".active").length ) {
-						distance = Math.round($(".active").eq(0).offset().top - row.offset().top)
-					}
-					if($(".row").length < 1) {
-						row.addClass("active")
-					}
-					for(var c = 0; c < cols; c++) {
-						var random = Math.round(Math.random() * 1) + 0
-
-						if(c == 0 && random == 0) {
-							opposite = 1;
-						} else if(c == 0 && random == 1) {
-							opposite = 0;
-						}
-
-						var curr = $(document.createElement("div")).addClass("circleCont")
-
-						if(c == cols-1) {
-							var currIn = $(document.createElement("div")).addClass("circle").css({"border-color":colorsArraySide[opposite]}).attr("data-target",opposite)
-						} else {
-							var currIn = $(document.createElement("div")).addClass("circle").css({"border-color":colorsArraySide[random]}).attr("data-target",random)
-						}
-						if(c == Math.floor(cols/2)) {
-							curr.addClass("center")
-							currIn.css({"background-color":colorsArrayCenter[random]}).attr("data-target",random)
-						} 
-
-						
-						
-						curr.append(currIn)
-						row.append(curr)
-						
-					}
-					game.append($(row))
-					//Binding gestures
+					// if($(".row").length < 1) {
+					// 	row.addClass("active").removeClass("toActivate")
+					// }
 					
+					createRow(row)
+
+					//Binding gestures
 					setTimeout(function(){
-						row.addClass("falling")
-					},800)
+						row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+					},200)
+
 
 				}
 
 				function lost() {
-					setTimeout(function(){
-						clearInterval(gameLoop)
+					if(life > 0) {
+						life = life-1
+						$(".lifeRow").find(".life").eq(0).remove()
+					} else {
 						inPlay = false
-						points = 0;
-						total = 0;
-						lvl = 1;
-						$(".row").remove()
-						$(".field").html("<div> =( </div>")
-							$(".field").html("<div class='over'>GAME OVER</div><div><a href='javascript:void(0)' id='replay'>Play Again</a></div>")
-							$(".up").addClass("lost")
-							$(".progress").width("0px")
-
-						},800)
+						clearInterval(gameLoop)
+						setTimeout(function(){
+							if( total > bestScore ) {
+								localStorage.setItem("best", total);
+							}
+							makeFall()
+							$(".finalScore").html(total)
+							$(".totalPoints").html(total)
+							$(".back").eq(0).css({"transition": "transform "+1+"s linear" , "-webkit-transform": "translateY(0px)", "-moz-transform": "translateY(0px)", "transform": "translateY(0px)"})
+							$(".row").css({"background-color":"transparent"})
+							$(".alert_row").html("")
+							inPlay = false
+							points = 0;
+							lvl = 1;
+							colorsToUse = 2
+							newLevelRow = false
+							gameLvl = 1
+							toWin = gameLvl*5
+							remaining = gameLvl*5
+							time = (targetHeight+20)/160;;
+							loopSpeed = targetHeight;
+							$(".panelIn").addClass("lost")
+							$(".playAgain").show()
+							$(".start").hide()
+						},200)
+					}
+					
 				}
 
 				function win() {
-					setTimeout(function(){
-						//clearInterval(gameLoop)
-						$(".progress").width("0px")
-						inPlay = false
-						$(".row").remove()
-						$(".field").html("Level UP")
-						points = 0;
-						lvl++
-						loopSpeed = (speed-1) * loopSpeed / speed
-						speed = speed - 1
-						if(loopSpeed < 500) {
-							loopSpeed = 500 - (lvl*25);
-							speed = 5 - (lvl*0.25);
+					inPlay = false;
+					if(lvl%3 == 0 && colorsToUse < colorsList.length) {
+						colorsToUse++	
+					}
+					lvl++
+					if(life < 3 && lvl%2 == 0) {
+						$(".alert_row").eq(0).find(".cell").append("<div class='separator'>+1 <div class='alignLife'><span class='lifeEarned'></span></div></div>")
+					}
+					points = 0;
+					// if(loopSpeed < 520 && loopSpeed > 320) {
+					// 	var k = 0.6/lvl
+					// 	loopSpeed = (time-k) * targetHeight / resetTime
+					// 	time = time - k
+					// } else 
+					if(loopSpeed < 340) {
+						loopSpeed = 320;
+						time = (loopSpeed * resetTime / targetHeight);
+					} else {
+						if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+							var k = 1/lvl*1.2
+						} else {
+							var k = 1/lvl*2.4
 						}
-						else if(loopSpeed < 250) {
-							loopSpeed = 250;
-							speed = 2.5;
-						}
-						console.log(loopSpeed, speed)
-						restartLoop()
-					},200)
-
-					setTimeout(function(){
-						inPlay = true;
-						$(".done").eq(0).html("20")
-						$(".field").html("")
-					}, 2000)
+						loopSpeed = (time-k) * targetHeight / resetTime
+						time = time - k
+					}
+					restartLoop()
 				}
 
 				function restartLoop(){
 					clearInterval(gameLoop)
-					gameLoop = setInterval(function(){
-							//Calling play function which build the game
-							if(inPlay) {
-								play()
+					if(  $(".row").length ) {
+						var elems = $(".row").nextAll(), count = elems.length;
+						$(".row").each(function(){
+							var nowHeight = targetHeight + $(this).offset().top
+							$(this).css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+							if (!--count) {
+								inPlay = true
+								gameLoop = setInterval(function(){
+											//Calling play function which build the game
+											if(inPlay) {
+												play()
+											}
+										},loopSpeed)
 							}
-						},loopSpeed)
+						})
+					} else {
+						inPlay = true;
+						gameLoop = setInterval(function(){
+									//Calling play function which build the game
+									if(inPlay) {
+										play()
+									}
+								},loopSpeed)
+					}
+
+					
 				}
 
 				function replay(){
-					inPlay = true;
+					rows_to_special =  Math.floor(Math.random() * 30)+30;
+					console.log("On Replay: "+rows_to_special)
+					$(".back").eq(0).css({"transition": "transform "+1+"s linear" , "-webkit-transform": "translateY(-"+$(window).height()+"px)", "-moz-transform": "translateY(-"+$(window).height()+"px)", "transform": "translateY(-"+$(window).height()+"px)"})
+					$(".row").remove()
+					$(".lost").removeClass("lost")
 					points = 0;
 					total = 0;
 					lvl = 1;
-					$(".done").eq(0).html("20")
-					$(".field").html("")
-					$(".lost").removeClass("lost")
-					$(".progress").width("0px")
+					life = 0;
+					colorsToUse = 2
+					newLevelRow = false
+					gameLvl = 1
+					toWin = gameLvl*5
+					remaining = gameLvl*5
+					remaining_to_special = 0;
+					loopSpeed = targetHeight;
+					time = (targetHeight+20)/160;
 					restartLoop()
 				}
 
+				function howToPlay(){
+					$(".row").remove()
+					$(".circleCont").css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY(0px)", "-moz-transform": "translateY(0px)", "transform": "translateY(0px)"})
+					$("#infos").show()
+					$(".back").eq(0).css({"transition": "transform "+1+"s linear" , "-webkit-transform": "translateY(-"+$(window).height()+"px)", "-moz-transform": "translateY(-"+$(window).height()+"px)", "transform": "translateY(-"+$(window).height()+"px)"})
+
+				}
+
+				function stopGame() {
+					clearInterval(gameLoop)
+					inPlay = false
+					$(".row").each(function(){
+						var nowHeight = $(this).offset().top + 1
+						$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+					})
+					$(".alert_row").each(function(){
+						var nowHeight = $(this).offset().top + 1
+						$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+					})
+				}
+
+				function goLeft(activeID) {
+					var nextID = parseInt(activeID) + 1
+					$("#"+activeID).removeClass("active").addClass("disabled").find(".circleCont.center").addClass("transLeft")
+					
+					if($("#"+nextID).length) {
+						$("#"+nextID).removeClass("toActivate").addClass("active")
+					}
+					
+					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target") && !$("#"+activeID).hasClass("special")) {
+						points += 1
+						total += 1
+						if($("#"+activeID).hasClass("new_life")){
+							life++
+							$(".lifeRow").append("<div class='life'></div>")
+						}
+					} else if($("#"+activeID).hasClass("special")) {
+						points += 1
+						total += 1
+						if($("#"+activeID).hasClass("new_life")){
+							life++
+							$(".lifeRow").append("<div class='life'></div>")
+						}
+						$("#"+activeID).html("<span class='color1'>C</span><span class='color2'>O</span><span class='color3'>L</span><span class='color4'>O</span><span class='color5'>R</span><span class='color1'>S</span><span class='color2'>!</span>").addClass("rainbow")
+							rainbowEffect()
+					} else {
+						$("#"+activeID).css({"background-color":"#FFEBEB !important"})
+						lost()
+					}
+				}
+
+				function goRight(activeID) {
+					var nextID = parseInt(activeID) + 1
+					$("#"+activeID).removeClass("active").addClass("disabled").find(".circleCont.center").addClass("transRight")
+					
+					if($("#"+nextID).length) {
+						$("#"+nextID).removeClass("toActivate").addClass("active")
+					}
+
+
+					if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target") && !$("#"+activeID).hasClass("special")) {
+						points += 1
+						total += 1
+						if($("#"+activeID).hasClass("new_life")){
+							life++
+							$(".lifeRow").append("<div class='life'></div>")
+						}
+					} else if($("#"+activeID).hasClass("special")) {
+						points += 1
+						total += 1
+						if($("#"+activeID).hasClass("new_life")){
+							life++
+							$(".lifeRow").append("<div class='life'></div>")
+						}
+						$("#"+activeID).html("<span class='color1'>C</span><span class='color2'>O</span><span class='color3'>L</span><span class='color4'>O</span><span class='color5'>R</span><span class='color1'>S</span><span class='color2'>!</span>").addClass("rainbow")
+							rainbowEffect()
+					} else {
+						$("#"+activeID).css({"background-color":"#FFEBEB !important"})
+						lost()
+					}
+				}
+
+				function makeFall(){
+					clearInterval(gameLoop)
+
+					$(".circleCont").each(function(){
+						if($(this).parent(".row")) {
+							$(this).parent(".row").addClass("disabled")
+							var fallSpeed =  Math.floor(Math.random() * 1.5) + 1
+							var floorHeight = $(window).height()
+							$(this).css({"transition": "transform "+fallSpeed+"s ease-in" , "-webkit-transform": "translateY("+floorHeight+"px)", "-moz-transform": "translateY("+floorHeight+"px)", "transform": "translateY("+floorHeight+"px)"})
+						}
+					})
+				}
+
+				function rainbowEffect() {
+
+					var elems = $(".row").nextAll(), count = elems.length;
+					$(".row:not(.disabled)").each(function(index){
+						// var activeID = $(".active").eq(0).attr("id")
+						var left = $(this).find(".circleCont").eq(0).find(".circle").attr("data-target")
+						var center = $(this).find(".circleCont").eq(1).find(".circle").attr("data-target")
+						var right = $(this).find(".circleCont").eq(2).find(".circle").attr("data-target")
+
+						if(left == center) {
+							$(document).trigger("swipeleft")
+						} else if( right == center) {
+							$(document).trigger("swiperight")
+						}
+
+						total++
+						if (!--count) {
+							// restartLoop();
+						}
+
+						$(".totalPoints").addClass("animated pulse")
+					})
+
+					
+
+					
+				}
+
 				//Set dimensions of game table
+				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+				} else {
+				}
+				$(".best").html(bestScore)
+				$(".panel").eq(0).css({
+					"top": ($(window).height()/2) - ($(".panel").height()/2),
+					"left": ($(window).width()/2) - ($(".panel").width()/2)
+				})
 				game.height($(window).height());
+
 				// $(".doArea").eq(0).css({"top":($(window).height()/2)-30})
-				$(".up").eq(0).height($(window).height() - $(".doArea").eq(0).height() - 70).css({"top":"70px"})
+				// $(".up").eq(0).height($(window).height() - $(".doArea").eq(0).height() - 70)
+
+				var currentEx = 0
+				var maxEx = $(".explanation").length
+				$(document).on("click","#next",function(){
+					if(currentEx == maxEx-1) {
+						$("#next").html("Menu >")
+						$(".back").eq(0).css({"transition": "transform "+1+"s linear" , "-webkit-transform": "translateY(0px)", "-moz-transform": "translateY(0px)", "transform": "translateY(0px)"})
+						setTimeout(function(){
+							$(".explanation").hide()
+							$(".explanation").eq(0).show()
+							$("#infos").hide()
+						},1000)
+					} else if(currentEx == maxEx-2) {
+						$("#next").html("Menu >")
+							$(".explanation").hide()
+						$("#prev").show()
+						currentEx++
+						$(".explanation").eq(currentEx).show()
+					} else {
+						$(".explanation").hide()
+						$("#prev").show()
+						currentEx++
+						$(".explanation").eq(currentEx).show()
+					}
+				})
+				$(document).on("click","#prev",function(){
+					$(".explanation").hide()
+					$("#prev").show()
+					currentEx--
+					$(".explanation").eq(currentEx).show()
+					if(currentEx == 0) {
+						$("#prev").hide()
+					}
+				})
 
 				//Binding Replay
 				$(document).on("click","#replay",function(){
 					replay();
 				})
 
-				//Populating the table at the start
+				$(document).on("click","#howToPlay",function(){
+					howToPlay();
+				})
+
+				//Binding events Keyboard
 				$(document).keydown(function(e){
-					var activeID = $(".active").attr("id")
+					var activeID = $(".active").eq(0).attr("id")
+					
 					if (e.keyCode == 37) { 
-						$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
-						$(".active").removeClass("active")
-						$(".row:not(.disabled)").eq(0).addClass("active")
-						if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
-							$("#"+activeID).removeClass("active")
-							if(parseInt($(".done").eq(0).html()) > 0){
-								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-							}
-							if(points >= 20) {
-								win()
-								return false;
-							} else {
-								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-								points += 1
-								total += 1*lvl
-							}
-						} else {
-							lost()
-						}
-						return false;
+						goLeft(activeID)
 					}
 
 					if (e.keyCode == 39) { 
-						$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
-						$(".active").removeClass("active")
-						$(".row:not(.disabled)").eq(0).addClass("active")
-						if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
-							$("#"+activeID).removeClass("active")
-							if(parseInt($(".done").eq(0).html()) > 0){
-								$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-							}
-							if(points >= 20) {
-								win()
-								return false;
-							} else {
-								$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-								$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-								points += 1
-								total += 1*lvl
-							}
-						} else {
-							lost()
-						}
-						return false;
+						goRight(activeID)
 					}
+					if (e.keyCode == 13 && !inPlay) {
+						replay();
+					}
+					if (e.keyCode == 32 ) {
+						stopGame();
+					}
+					if (e.keyCode == 82 ) {
+						restartLoop()
+					}
+					if (e.keyCode == 70 ) {
+						makeFall()
+					}
+
+				})
+				
+				//Binding events Touch
+				$(document).on("swipeleft",function(){
+					var activeID = $(".active").eq(0).attr("id")
+					goLeft(activeID)
 				})
 
-$(document).on("swipeleft",function(){
-	var activeID = $(".active").attr("id")
-	$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transLeft")
-	$(".active").removeClass("active")
-	$(".row:not(.disabled)").eq(0).addClass("active")
-	if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(0).attr("data-target")) {
-		$("#"+activeID).removeClass("active")
-		if(parseInt($(".done").eq(0).html()) > 0){
-			$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-		}
-		if(points >= 20) {
-			win()
-			return false;
-		} else {
-			$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-			$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-			points += 1
-			total += 1*lvl
-		}
-	} else {
-		lost()
-	}
-	return false;
-})
-
-$(document).on("swiperight", function(){
-	var activeID = $(".active").attr("id")
-	$(".active").eq(0).addClass("disabled").find(".circleCont.center").addClass("transRight")
-	$(".active").removeClass("active")
-	$(".row:not(.disabled)").eq(0).addClass("active")
-	if($("#"+activeID).find(".circle").eq(1).attr("data-target") == $("#"+activeID).find(".circle").eq(2).attr("data-target")) {
-		$("#"+activeID).removeClass("active")
-		if(parseInt($(".done").eq(0).html()) > 0){
-			$(".done").eq(0).html(parseInt($(".done").eq(0).html()) - 1)
-		}
-		if(points >= 20) {
-			win()
-			return false;
-		} else {
-			$(".totalPoints").html(parseInt($(".totalPoints").html()) + (1*lvl))
-			$(".progress").width( $(".progress").width() + ($(window).width() / 20) )
-			points += 1
-			total += 1*lvl
-		}
-	} else {
-		lost()
-	}
-	return false;
-})
+				$(document).on("swiperight", function(){
+					var activeID = $(".active").eq(0).attr("id")
+					goRight(activeID)
+				})
 
 
-var gameLoop = setInterval(function(){
+				var gameLoop = setInterval(function(){
 					//Calling play function which build the game
 					if(inPlay) {
 						play()
 					}
 				},loopSpeed)
 
-var gameCheck = setInterval(function(){
-	if(inPlay && $(".active").length){
+				var gameCheck = setInterval(function(){
+					if(inPlay){
 						//Removing old rows
-						if($(".active").eq(0).offset().top > ($(window).height()) + 70) {
-							lost()
+						if($(".active:not(.disabled)").length) {
+							if($(".active:not(.disabled)").eq(0).offset().top >= targetHeight-90) {
+								lost()
+							}
 						}
-						// if($(".blur").eq(0).offset().top > $(".doArea").offset().top-70) {
-						// 	$(".blur").eq(0).removeClass("blur")
-						// }
+						//Removing from DOM old rows
+						if($(".disabled").length){
+							if($(".disabled").eq(0).offset().top >= targetHeight-100) {
+								$(".disabled").eq(0).remove()
+							}
+						}
+
+						if( parseInt($(".totalPoints").html()) != total ) {
+							$(".totalPoints").html(total)
+						}
+
+						if($(".active").length < 1) {
+							$(".row:not(.disabled)").eq(0).removeClass("toActivate").addClass("active")
+						}
+
+						if($(".new_life").hasClass(".disabled") && $(".new_life").offset().top > $(window).height() ) {
+							life++
+							(".lifeRow").append("<div class='life'></div>")
+						}
+
+						if(loopSpeed < 320) {
+							inPlay = false;
+							loopSpeed = 320;
+							time = (loopSpeed * resetTime / targetHeight);
+							restartLoop()
+						}
+
+						if(rows_to_special < remaining_to_special) {
+							console.log("Inside interval check: " +rows_to_special)
+							rows_to_special =  Math.floor(Math.random() * 30)+30
+						}
 					}
 				}, 100)
 
 
-})
+			})
 </script>
 </head>
 <body>
 	<wrapper>
 		<header>
 			<div class="progress"></div>
-			<div class="logo">
-				<span class="color1" >C</span>
-				<span class="color2" >o</span>
-				<span class="color3" >l</span>
-				<span class="color4" >o</span>
-				<span class="color5" >r</span>
-				<span class="color1" >s</span>
-				<span class="color1" >!</span>
-			</div>
+				<div class="logo"></div>
 			<div class="totalPoints">0</div>
 		</header>
+		<div class="back">
+			<div class="panel">
+				<div class=" panelIn cell">
+					<div class="playAgain">
+							<div class="logo"></div>
+						<div class="score">Score</div>
+						<div class='finalScore'></div>
+						<div class='over_button'>
+							<a href='javascript:void(0)' id='replay'>Play</a>
+							<a href='javascript:void(0)' id='howToPlay'>How to Play</a>
+						</div>
+					</div>
+					<div class="start">
+							<div class="logo"></div>
+						<div class="score">Your Best</div>
+						<div class="best"></div>
+						<div class='over_button'>
+							<a href='javascript:void(0)' id='replay'>Play</a>
+							<a href='javascript:void(0)' id='howToPlay'>How to Play</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<main id="infos">
+			<div class="explanation">
+				<div class="title color1">How to Play</div>
+				<div class="text">Swipe with your finger  to the left or to the right, anywhere you want on the screen, and move the center dot inside the hole of the same color.</div>
+				<div class="example_row" ><div class="circleCont"><div class="circle" data-target="1" style="border-color: rgb(219, 235, 194); background-color: rgb(248, 251, 245);"></div></div><div class="circleCont center"><div class="circle" data-target="0" style="border-color: rgb(247, 167, 166); background-color: rgb(247, 167, 166);"></div></div><div class="circleCont"><div class="circle" data-target="0" style="border-color: rgb(247, 167, 166); background-color: rgb(251, 244, 244);"></div></div></div>
+			</div>
+
+			<div class="explanation hide">
+				<div class="title color1"><span class='color1'>C</span><span class='color2'>O</span><span class='color3'>L</span><span class='color4'>O</span><span class='color5'>R</span><span class='color1'>S</span><span class='color2'>!</span> dot</div>
+				<div class="text">This is a special dot that you can put wherever you want and will automatically move all the dots on the screen to their correct position, giving you all the related points. It is obviously a rare bonus, so use it in a clever way.</div>
+				<div class="example_row" >
+					<div class="circleCont">
+						<div class="circle" data-target="1" style="border-color: rgb(219, 235, 194); background-color: rgb(248, 251, 245);"></div>
+					</div>
+					<div class="circleCont center">
+						<div class="circle special" data-target="0" style="border-color: rgb(247, 167, 166); background-color: rgb(247, 167, 166);"></div>
+					</div>
+					<div class="circleCont">
+						<div class="circle" data-target="0" style="border-color: rgb(247, 167, 166); background-color: rgb(251, 244, 244);"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="explanation hide">
+				<div class="title color1">Lifes</div>
+				<div class="text">You eran 1 life each 2 level. You can lose a life if you move the dot to the wrong position or if you're not fast and a row that you didn't swiped go over the bottom of the screen. You can have a maximum of 3 lifes.</div>
+					<div class="example">
+						<div class="lifeRow">
+							<div class="life"></div>
+							<div class="life"></div>
+							<div class="life"></div>
+						</div>
+					</div>
+			</div>
+
+			<a class="next_button" id="next">Next></a>
+			<a class="prev_button hide" id="prev">< Prev</a>
+			<div class="clear"></div>
+		</main>
 		<main id="gameTable">
+			<div class="lifeRow"></div>
 			<div class="table up"><div class="field cell"></div></div>
 			<!-- <div class="doArea"></div> -->
 		</main>
