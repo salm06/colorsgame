@@ -434,7 +434,7 @@
 
 				var currentEx = 0
 				var maxEx = $(".explanation").length
-				$(document).on("click","#next",function(){
+				$(document).on("click, tap","#next",function(){
 					if(currentEx == maxEx-1) {
 						$("#next").html("Menu >")
 						$(".back").eq(0).css({"transition": "transform "+1+"s linear" , "-webkit-transform": "translateY(0px)", "-moz-transform": "translateY(0px)", "transform": "translateY(0px)"})
@@ -456,7 +456,7 @@
 						$(".explanation").eq(currentEx).show()
 					}
 				})
-				$(document).on("click","#prev",function(){
+				$(document).on("click, tap","#prev",function(){
 					$(".explanation").hide()
 					$("#prev").show()
 					currentEx--
