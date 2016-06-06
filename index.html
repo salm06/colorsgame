@@ -179,7 +179,7 @@
 				function lost() {
 					if(life > 0) {
 						life = life-1
-						$(".lifeRow").find(".life").eq(0).remove()
+						$("#gameTable").find(".life").eq(0).remove()
 					} else {
 						inPlay = false
 						clearInterval(gameLoop)
@@ -326,14 +326,14 @@
 						total += 1
 						if($("#"+activeID).hasClass("new_life")){
 							life++
-							$(".lifeRow").append("<div class='life'></div>")
+							$("#gameTable").find(".lifeRow").append("<div class='life'></div>")
 						}
 					} else if($("#"+activeID).hasClass("special")) {
 						points += 1
 						total += 1
 						if($("#"+activeID).hasClass("new_life")){
 							life++
-							$(".lifeRow").append("<div class='life'></div>")
+							$("#gameTable").find(".lifeRow").append("<div class='life'></div>")
 						}
 						$("#"+activeID).html("<span class='color1'>C</span><span class='color2'>O</span><span class='color3'>L</span><span class='color4'>O</span><span class='color5'>R</span><span class='color1'>S</span><span class='color2'>!</span>").addClass("rainbow")
 							rainbowEffect()
@@ -357,14 +357,14 @@
 						total += 1
 						if($("#"+activeID).hasClass("new_life")){
 							life++
-							$(".lifeRow").append("<div class='life'></div>")
+							$("#gameTable").find(".lifeRow").append("<div class='life'></div>")
 						}
 					} else if($("#"+activeID).hasClass("special")) {
 						points += 1
 						total += 1
 						if($("#"+activeID).hasClass("new_life")){
 							life++
-							$(".lifeRow").append("<div class='life'></div>")
+							$("#gameTable").find(".lifeRow").append("<div class='life'></div>")
 						}
 						$("#"+activeID).html("<span class='color1'>C</span><span class='color2'>O</span><span class='color3'>L</span><span class='color4'>O</span><span class='color5'>R</span><span class='color1'>S</span><span class='color2'>!</span>").addClass("rainbow")
 							rainbowEffect()
@@ -545,7 +545,7 @@
 
 						if($(".new_life").hasClass(".disabled") && $(".new_life").offset().top > $(window).height() && life < 3) {
 							life++
-							(".lifeRow").append("<div class='life'></div>")
+							$("#gameTable").find(".lifeRow").append("<div class='life'></div>")
 						}
 
 						if(loopSpeed < 320) {
