@@ -649,7 +649,6 @@
   }
 
   #infos .next_button {
-    display: block;
     float: right;
     margin-top: 10px;
     padding: 10px 40px;
@@ -665,7 +664,6 @@
   }
 
     #infos .prev_button {
-      display: block;
     float: left;
     margin-top: 10px;
     padding: 10px 40px;
