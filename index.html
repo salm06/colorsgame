@@ -76,6 +76,9 @@
 				var progressWidth = 0
 				var bestScore = localStorage.getItem("best") ? localStorage.getItem("best") : 0;
 
+				var currentEx = 0
+				var maxEx = $(".explanation").length
+
 
 				function createRow(row) {
 					if(newLevelRow){
@@ -293,6 +296,9 @@
 				}
 
 				function howToPlay(){
+					currentEx = 0
+					$("#next").html("Next >")
+					$("#prev").hide()
 					$(".row").remove()
 					$(".circleCont").css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY(0px)", "-moz-transform": "translateY(0px)", "transform": "translateY(0px)"})
 					$("#infos").show()
@@ -463,6 +469,10 @@
 					$(".explanation").eq(currentEx).show()
 					if(currentEx == 0) {
 						$("#prev").hide()
+					}
+
+					if(currentEx != maxEx-1 ) {
+						$("#next").html("Next >")
 					}
 				})
 
