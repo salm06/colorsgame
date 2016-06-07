@@ -54,6 +54,8 @@
 				var newPad = (newH/2)-30
 				var newTop = (top * targetHeight / s)
 
+				var rowPad = newPad
+
 
 
 
@@ -87,10 +89,11 @@
 						var levelRowIn = $(document.createElement("div")).addClass("cell").html("Level" + gameLvl)
 						row.append(levelRowIn)
 						game.append(row)
+						rowPad = 0
 						//Binding gestures
 						setTimeout(function(){
-							// row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
-							win();
+							// row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)","height": newH, "padding-top":newPad, "top":"-"+newTop+"px"})
+							//win();
 						},200)
 						newLevelRow = false
 					} else {
@@ -135,7 +138,7 @@
 						row.append(curr1, curr2, curr3)
 					}
 					
-
+					
 					game.append(row)
 				}
 
@@ -156,6 +159,7 @@
 						}
 
 					} 
+					rowPad = newPad
 					var row = $(document.createElement("div")).addClass(lastCircle + " " + earnLife + " row toActivate level_"+gameLvl).attr("id",rows_count)
 					
 					rows_count++;
@@ -173,7 +177,7 @@
 
 					//Binding gestures
 					setTimeout(function(){
-						row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)"})
+						row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)","height": newH, "padding-top":rowPad, "top":"-"+newTop+"px"})
 					},200)
 
 
@@ -306,19 +310,6 @@
 
 				}
 
-				function stopGame() {
-					clearInterval(gameLoop)
-					inPlay = false
-					$(".row").each(function(){
-						var nowHeight = $(this).offset().top + 1
-						$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
-					})
-					$(".alert_row").each(function(){
-						var nowHeight = $(this).offset().top + 1
-						$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
-					})
-				}
-
 				function goLeft(activeID) {
 					var nextID = parseInt(activeID) + 1
 					$("#"+activeID).removeClass("active").addClass("disabled").find(".circleCont.center").addClass("transLeft")
@@ -418,16 +409,23 @@
 
 						$(".totalPoints").addClass("animated pulse")
 					})
-
-					
-
-					
 				}
+
+				//DEBUGGING FUNCTIONS
+				// function stopGame() {
+				// 	clearInterval(gameLoop)
+				// 	inPlay = false
+				// 	$(".row").each(function(){
+				// 		var nowHeight = $(this).offset().top + 1
+				// 		$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+(nowHeight+newTop)+"px)", "-moz-transform": "translateY("+(nowHeight+newTop)+"px)", "transform": "translateY("+(nowHeight+newTop)+"px)"})
+				// 	})
+				// 	$(".alert_row").each(function(){
+				// 		var nowHeight = $(this).offset().top + 1
+				// 		$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+(nowHeight+newTop)+"px)", "-moz-transform": "translateY("+(nowHeight+newTop)+"px)", "transform": "translateY("+(nowHeight+newTop)+"px)"})
+				// 	})
+				// }
 
 				//Set dimensions of game table
-				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-				} else {
-				}
 				$(".best").html(bestScore)
 				$(".panel").eq(0).css({
 					"top": ($(window).height()/2) - ($(".panel").height()/2),
