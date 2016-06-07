@@ -430,6 +430,7 @@
 					"top": ($(window).height()/2) - ($(".panel").height()/2),
 					"left": ($(window).width()/2) - ($(".panel").width()/2)
 				})
+				$("#infos").height($(window).height())
 				game.height($(window).height());
 
 				// $(".doArea").eq(0).css({"top":($(window).height()/2)-30})
@@ -606,13 +607,13 @@
 		</div>
 		<main id="infos">
 			<div class="explanation">
-				<div class="title color1">How to Play</div>
+				<div class="title color5">How to Play</div>
 				<div class="text">Swipe with your finger  to the left or to the right, anywhere you want on the screen, and move the center dot inside the hole of the same color.</div>
 				<div class="example_row" ><div class="circleCont"><div class="circle" data-target="1" style="border-color: rgb(219, 235, 194); background-color: rgb(248, 251, 245);"></div></div><div class="circleCont center"><div class="circle" data-target="0" style="border-color: rgb(247, 167, 166); background-color: rgb(247, 167, 166);"></div></div><div class="circleCont"><div class="circle" data-target="0" style="border-color: rgb(247, 167, 166); background-color: rgb(251, 244, 244);"></div></div></div>
 			</div>
 
 			<div class="explanation hide">
-				<div class="title color1"><span class='color1'>C</span><span class='color2'>O</span><span class='color3'>L</span><span class='color4'>O</span><span class='color5'>R</span><span class='color1'>S</span><span class='color2'>!</span> dot</div>
+				<div class="title color5"><span class='color1'>C</span><span class='color2'>O</span><span class='color3'>L</span><span class='color4'>O</span><span class='color5'>R</span><span class='color1'>S</span><span class='color2'>!</span> dot</div>
 				<div class="text">This is a special dot that you can put wherever you want and will automatically move all the dots on the screen to their correct position, giving you all the related points. It is obviously a rare bonus, so use it in a clever way.</div>
 				<div class="example_row" >
 					<div class="circleCont">
@@ -628,7 +629,7 @@
 			</div>
 
 			<div class="explanation hide">
-				<div class="title color1">Lifes</div>
+				<div class="title color5">Lifes</div>
 				<div class="text">You earn 1 life each 2 level. You can lose a life if you move the dot to the wrong position or if you're not fast and a row that you didn't swiped go over the bottom of the screen. You can have a maximum of 3 lifes.</div>
 					<div class="example">
 						<div class="lifeRow">
@@ -638,10 +639,11 @@
 						</div>
 					</div>
 			</div>
-
-			<a class="next_button" id="next">Next></a>
-			<a class="prev_button hide" id="prev">< Prev</a>
-			<div class="clear"></div>
+			<div class="info_buttons">
+				<a class="next_button" id="next">Next></a>
+				<a class="prev_button hide" id="prev">< Prev</a>
+				<div class="clear"></div>
+			</div>
 		</main>
 		<main id="gameTable">
 			<div class="lifeRow"></div>
