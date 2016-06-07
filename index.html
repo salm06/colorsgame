@@ -402,10 +402,6 @@
 						}
 
 						total++
-						if (!--count) {
-							// restartLoop();
-						}
-
 						$(".totalPoints").addClass("animated pulse")
 					})
 				}
@@ -565,6 +561,7 @@
 
 						if(rows_to_special < remaining_to_special) {
 							console.log("Inside interval check: " +rows_to_special)
+							remaining_to_special = 0
 							rows_to_special =  Math.floor(Math.random() * 10)+1
 						}
 					}
