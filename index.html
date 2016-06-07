@@ -92,8 +92,7 @@
 						rowPad = 0
 						//Binding gestures
 						setTimeout(function(){
-							// row.addClass("falling").css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+targetHeight+"px)", "-moz-transform": "translateY("+targetHeight+"px)", "transform": "translateY("+targetHeight+"px)","height": newH, "padding-top":newPad, "top":"-"+newTop+"px"})
-							//win();
+							win();
 						},200)
 						newLevelRow = false
 					} else {
@@ -254,7 +253,7 @@
 						var elems = $(".row").nextAll(), count = elems.length;
 						$(".row").each(function(){
 							var nowHeight = targetHeight + $(this).offset().top
-							$(this).css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+nowHeight+"px)", "-moz-transform": "translateY("+nowHeight+"px)", "transform": "translateY("+nowHeight+"px)"})
+							$(this).css({"transition": "transform "+time+"s linear" , "-webkit-transform": "translateY("+(nowHeight+newTop)+"px)", "-moz-transform": "translateY("+(nowHeight+newTop)+"px)", "transform": "translateY("+(nowHeight+newTop)+"px)"})
 							if (!--count) {
 								inPlay = true
 								gameLoop = setInterval(function(){
@@ -412,18 +411,18 @@
 				}
 
 				//DEBUGGING FUNCTIONS
-				// function stopGame() {
-				// 	clearInterval(gameLoop)
-				// 	inPlay = false
-				// 	$(".row").each(function(){
-				// 		var nowHeight = $(this).offset().top + 1
-				// 		$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+(nowHeight+newTop)+"px)", "-moz-transform": "translateY("+(nowHeight+newTop)+"px)", "transform": "translateY("+(nowHeight+newTop)+"px)"})
-				// 	})
-				// 	$(".alert_row").each(function(){
-				// 		var nowHeight = $(this).offset().top + 1
-				// 		$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+(nowHeight+newTop)+"px)", "-moz-transform": "translateY("+(nowHeight+newTop)+"px)", "transform": "translateY("+(nowHeight+newTop)+"px)"})
-				// 	})
-				// }
+				function stopGame() {
+					clearInterval(gameLoop)
+					inPlay = false
+					$(".row").each(function(){
+						var nowHeight = $(this).offset().top + 1
+						$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+(nowHeight+newTop)+"px)", "-moz-transform": "translateY("+(nowHeight+newTop)+"px)", "transform": "translateY("+(nowHeight+newTop)+"px)"})
+					})
+					$(".alert_row").each(function(){
+						var nowHeight = $(this).offset().top + 1
+						$(this).css({"transition": "transform "+0+"s linear" , "-webkit-transform": "translateY("+(nowHeight+newTop)+"px)", "-moz-transform": "translateY("+(nowHeight+newTop)+"px)", "transform": "translateY("+(nowHeight+newTop)+"px)"})
+					})
+				}
 
 				//Set dimensions of game table
 				$(".best").html(bestScore)
@@ -531,8 +530,8 @@
 				var gameCheck = setInterval(function(){
 					if(inPlay){
 						//Removing old rows
-						if($(".active:not(.disabled)").length) {
-							if($(".active:not(.disabled)").eq(0).offset().top >= targetHeight-90) {
+						if($(".row:not(.disabled)").length) {
+							if($(".row:not(.disabled)").eq(0).offset().top >= targetHeight-newTop-90) {
 								lost()
 							}
 						}
@@ -565,7 +564,7 @@
 
 						if(rows_to_special < remaining_to_special) {
 							console.log("Inside interval check: " +rows_to_special)
-							rows_to_special =  Math.floor(Math.random() * 30)+30
+							rows_to_special =  Math.floor(Math.random() * 1)+10
 						}
 					}
 				}, 100)
