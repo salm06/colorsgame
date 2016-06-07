@@ -4,6 +4,13 @@
 	 License: none (public domain)
 	 */
 
+	 @font-face {
+		  font-family: 'Lato';
+		  src: url('../static/Lato-Light.ttf'); /* IE9 Compat Modes */
+		  src: url('../static/Lato-Light.ttf?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+		      	 url('../static/Lato-Light.ttf')  format('truetype'), /* Safari, Android, iOS */
+		}
+
 	 html, body, div, span, applet, object, iframe,
 	 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 	 a, abbr, acronym, address, big, cite, code,
@@ -57,7 +64,7 @@
 	 {
 	 	height: 100%;
 	 	width: 100%;
-	 	font-family: 'Lato', sans-serif;
+	 	font-family: 'Lato', Fallback, sans-serif;
 	 	font-size: 1em;
 	 	font-weight: lighter;
 	 	overflow: hidden;
